@@ -13,6 +13,9 @@ typedef enum
 
 typedef enum
 {
+    MMSigProc_State_PLAYING,
+    MMSigProc_State_PAUSED,
+    MMSigProc_State_DONE,
     MMSigProc_State_UNKNOWN
 } MMSigProc_State;
 
