@@ -9,4 +9,6 @@ struct __MMSigChain {
     MMSigProc sigProcs; /* The head of the chain of signal processors */
 };
 
+void MMSigChain_init(MMSigChain *sc);
+
 #endif /* MM_SIGCHAIN_H */

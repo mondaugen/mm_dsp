@@ -1,6 +1,6 @@
 #include "mm_sigchain.h"
 
-MMSigProc_Err MMSigChain_tick(MMSigProc *sp)
+static MMSigProc_Err MMSigChain_tick(MMSigProc *sp)
 {
     MMSigProc *current;
     for (current = &((MMSigChain*)sp)->sigProcs; current != NULL; current = current->next) {
