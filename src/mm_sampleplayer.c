@@ -7,11 +7,8 @@ MMSigProc_Err MMSamplePlayerSigProc_tick(SigProc *sp)
 {
    size_t i;
    MMSamplePlayerSigProc *spsp = (SigProc*)sp;
-   for (i = 0; i < spsp->outBusses.length; i++) {
-       MMBus bus = MMBusArray_get(spsp->parent->outBusses,i);
-       /* we could have a switch for interpolation here... */
-       *bus += MMWavTab_get(spsp->samples,spsp->index);
-   }
+   /* we could have a switch for interpolation here... */
+   *(spsp->parent->bus) += MMWavTab_get(spsp->samples,spsp->index);
    spsp->index += rate;
    if (spsp->loop) {
        while (spsp->index >= spsp->samples.length) {
@@ -53,4 +50,5 @@ MMSamplePlayer *MMSamplePlayer_new(void)
 void MMSamplePlayer_init(MMSamplePlayer *sp)
 {
     memset(sp,0,sizeof(MMSamplePlayer));
+    MMSigProc_init(sp->placeholder);
 }

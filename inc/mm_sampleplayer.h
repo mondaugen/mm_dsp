@@ -28,4 +28,9 @@ struct __MMSamplePlayerSigProc {
 
 #define MMSamplePlayerSigProc_free(spsp) free(spsp) 
 
+MMSamplePlayerSigProc *MMSamplePlayerSigProc_new(void);
+MMSamplePlayer *MMSamplePlayer_new(void);
+void MMSamplePlayerSigProc_init(MMSamplePlayerSigProc *spsp)
+void MMSamplePlayer_init(MMSamplePlayer *sp);
+
 #endif /* MM_SAMPLEPLAYER_H */
