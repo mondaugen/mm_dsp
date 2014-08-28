@@ -1,6 +1,7 @@
 #ifndef MM_BUS_H
 #define MM_BUS_H 
 
+#include "mm_array.h" 
 #include "mm_sample.h" 
 
 /* A bus is just a pointer to a Sample */

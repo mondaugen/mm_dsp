@@ -5,6 +5,8 @@
 #include "mm_sample.h"
 #include "mm_bus.h"
 #include "mm_array.h" 
+#include "mm_sigproc.h" 
+#include "mm_wavtab.h" 
 
 typedef struct __MMSamplePlayer MMSamplePlayer;
 
@@ -30,7 +32,7 @@ struct __MMSamplePlayerSigProc {
 
 MMSamplePlayerSigProc *MMSamplePlayerSigProc_new(void);
 MMSamplePlayer *MMSamplePlayer_new(void);
-void MMSamplePlayerSigProc_init(MMSamplePlayerSigProc *spsp)
+void MMSamplePlayerSigProc_init(MMSamplePlayerSigProc *spsp);
 void MMSamplePlayer_init(MMSamplePlayer *sp);
 
 #endif /* MM_SAMPLEPLAYER_H */
