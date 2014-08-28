@@ -3,13 +3,13 @@
 
 static MMSigProc_Err MMSigChain_tick(MMSigProc *sp)
 {
-    MMSigProc *current;
-    for (current = &((MMSigChain*)sp)->sigProcs;
-            current != NULL;
-            current = (MMSigProc*)MMDLList_getNext(current)) {
+    MMSigProc *current, *next;
+    current = &((MMSigChain*)sp)->sigProcs;
+    do {
+        next = (MMSigProc*)MMDLList_getNext(current); /* we store the next item in the list because MMSigProc_tick could free current making its next NULL */
         MMSigProc_tick(current);
-/*         MMSigProc_handleState(current); */
-    }
+        current = next;
+    } while (current);
     return MMSigProc_Err_GOOD;
 }
 
