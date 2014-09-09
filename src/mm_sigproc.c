@@ -20,3 +20,5 @@ MMSigProc *MMSigProc_new(void)
 {
     return (MMSigProc*)malloc(sizeof(MMSigProc));
 }
+
+
