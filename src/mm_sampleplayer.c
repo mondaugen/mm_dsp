@@ -5,6 +5,11 @@
  * the sample player. No interpolation for now. */
 MMSigProc_Err MMSamplePlayerSigProc_tick(MMSigProc *sp)
 {
+    /* Call superclass tick method */
+    MMSigProc_Err result;
+    if ((result = MMSigProc_defaultTick(sp)) != MMSigProc_Err_GOOD) {
+        return result;
+    }
     if (MMSigProc_getState(sp) == MMSigProc_State_DONE) {
         return MMSigProc_Err_IDLE;
     }
@@ -27,8 +32,7 @@ MMSigProc_Err MMSamplePlayerSigProc_tick(MMSigProc *sp)
     /* we handle the doneAction */
     if ((MMSigProc_getState(spsp) == MMSigProc_State_DONE) 
             && (MMSigProc_getDoneAction(spsp) == MMSigProc_DoneAction_FREE)) {
-        spsp = (MMSamplePlayerSigProc*)MMDLList_remove((MMDLList*)spsp);
-        MMSamplePlayerSigProc_free(spsp); 
+        sp->state = MMSigProc_State_WAIT_FREE;
     }
     return MMSigProc_Err_GOOD;
 }

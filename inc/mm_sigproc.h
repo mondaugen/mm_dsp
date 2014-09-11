@@ -12,7 +12,8 @@ typedef enum
     MMSigProc_Err_GOOD,
     MMSigProc_Err_UNKNOWN,
     MMSigProc_Err_NOTINIT, /* set when something has not been initialized properly or fully */
-    MMSigProc_Err_IDLE /* Not really an error, output when the sigproc is not do anything (perhaps because it is in "done" state) */
+    MMSigProc_Err_IDLE, /* Not really an error, output when the sigproc is not do anything (perhaps because it is in "done" state) */
+    MMSigProc_Err_JUST_FREED /* Also not an error, just freed the node so we're done */
 } MMSigProc_Err;
 
 typedef enum
@@ -20,7 +21,9 @@ typedef enum
     MMSigProc_State_PLAYING,
     MMSigProc_State_PAUSED,
     MMSigProc_State_DONE,
-    MMSigProc_State_UNKNOWN
+    MMSigProc_State_UNKNOWN,
+    MMSigProc_State_WAIT_FREE, /* Waiting to be freed */
+    MMSigProc_State_FREED /* Has been freed */
 } MMSigProc_State;
 
 typedef enum
@@ -66,6 +69,9 @@ struct __MMSigProc {
 #define MMSigProc_addBeforeHead(whom,who) do { \
     MMSigProc_inheritOwner(whom,who); \
     MMDLList_addBeforeHead((MMDLList*)whom,(MMDLList*)who); } while (0);
+#define MMSigProc_remove(who) do { \
+    who->owner = NULL;\
+    MMDLList_remove((MMDLList*)who); } while (0);
 
 void MMSigProc_init(MMSigProc *sp);
 MMSigProc *MMSigProc_new(void);
