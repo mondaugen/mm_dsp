@@ -11,13 +11,13 @@ typedef struct __MMSigConst MMSigConst;
 
 struct __MMSigConst {
     MMSigProc head;
-    MMBus outBus;
+    MMBus outBusHandle;
     MMSample constant;
     MMBool doSum;
 };
 
-#define MMSigConst_getOutBus(sc) ((MMSigConst*)sc)->outBus 
-#define MMSigConst_setOutBus(sc,val) MMSigConst_getOutBus(sc) = val
+#define MMSigConst_getOutBusHandle(sc) ((MMSigConst*)sc)->outBusHandle 
+#define MMSigConst_setOutBusHandle(sc,val) MMSigConst_getOutBusHandle(sc) = val
 #define MMSigConst_getConstant(sc) ((MMSigConst*)sc)->constant
 #define MMSigConst_setConstant(sc,val) MMSigConst_getConstant(sc) = val
 #define MMSigConst_getDoSum(sc) ((MMSigConst*)sc)->doSum

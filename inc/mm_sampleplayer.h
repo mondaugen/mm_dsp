@@ -12,7 +12,9 @@ typedef struct __MMSamplePlayer MMSamplePlayer;
 
 struct __MMSamplePlayer {
     /* only can output to one bus, this is not a problem (use a bus splitter..) */
-    MMBus          outBus;
+    /* uses a bus handle so that the sample we are writing to can be changed
+     * globally */ 
+    MMBusHandle    outBusHandle;
     /* reference for where to put the playing samplers in the signal chain */
     MMSigProc placeHolder;
 };

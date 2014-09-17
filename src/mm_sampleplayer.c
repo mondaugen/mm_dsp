@@ -16,7 +16,9 @@ MMSigProc_Err MMSamplePlayerSigProc_tick(MMSigProc *sp)
     size_t i;
     MMSamplePlayerSigProc *spsp = (MMSamplePlayerSigProc*)sp;
     /* we could have a switch for interpolation here... */
-    *(spsp->parent->outBus) += MMWavTab_get(*(spsp->samples),spsp->index);
+    MMBusHandle_setSample(spsp->parent->outBusHandle,
+        MMBusHandle_getSample(spsp->parent->outBusHandle)
+            + MMWavTab_get(*(spsp->samples),spsp->index));
     spsp->index += spsp->rate;
     if (spsp->loop) {
         while (spsp->index >= spsp->samples->length) {
