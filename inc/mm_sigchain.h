@@ -7,7 +7,7 @@ typedef struct __MMSigChain MMSigChain;
 struct __MMSigChain {
     MMSigProc head; /* sub class of MMSigProc */
     MMSigProc sigProcs; /* The head of the chain of signal processors */
-    size_t trashSize;   /* size of queue that holds SigProcs to be freed */
+//    size_t trashSize;   /* size of queue that holds SigProcs to be freed */
     /* put queue here ! */
 };
 

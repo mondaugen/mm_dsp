@@ -38,7 +38,6 @@ typedef void          (*MMSigProc_FreeFunc)(MMSigProc *);
 
 struct __MMSigProc {
     MMDLList                     listHead;
-    MMSigChain                      owner; /* The signal chain that this sig proc is a part of. */
     MMSigProc_TickFunc               tick;
 /*     MMSigProc_HandleStateFunc handleState; */
     MMSigProc_State                 state;
@@ -49,29 +48,16 @@ struct __MMSigProc {
  * MMSigProc* or pointers to any instances of its subclasses. */
 #define MMSigProc_tick(sp) ((MMSigProc*)sp)->tick((MMSigProc*)sp);
 
-#define MMSigProc_setTick(sp,func) ((MMSigProc*)sp)->tick = func; 
-#define MMSigProc_getState(sp) ((MMSigProc*)sp)->state
-#define MMSigProc_setState(sp,val) MMSigProc_getState(sp) = val
-#define MMSigProc_getDoneAction(sp) ((MMSigProc*)sp)->doneAction
-#define MMSigProc_setDoneAction(sp,val) MMSigProc_getDoneAction(sp) = val
-/* Give "from's" owner to "to" */
-#define MMSigProc_inheritOwner(from,to) \
-    ((MMSigProc*)to)->owner = ((MMSigProc*)from)->owner;
-#define MMSigProc_insertAfter(whom,who) do { \
-    MMSigProc_inheritOwner(whom,who); \
-    MMDLList_insertAfter((MMDLList*)whom,(MMDLList*)who); } while (0);
-#define MMSigProc_insertBefore(whom,who) do { \
-    MMSigProc_inheritOwner(whom,who); \
-    MMDLList_insertBefore((MMDLList*)whom,(MMDLList*)who); } while (0);
-#define MMSigProc_addAfterTail(whom,who) do { \
-    MMSigProc_inheritOwner(whom,who); \
-    MMDLList_addAfterTail((MMDLList*)whom,(MMDLList*)who); } while (0);
-#define MMSigProc_addBeforeHead(whom,who) do { \
-    MMSigProc_inheritOwner(whom,who); \
-    MMDLList_addBeforeHead((MMDLList*)whom,(MMDLList*)who); } while (0);
-#define MMSigProc_remove(who) do { \
-    who->owner = NULL;\
-    MMDLList_remove((MMDLList*)who); } while (0);
+#define MMSigProc_setTick(sp,func)          ((MMSigProc*)sp)->tick = func; 
+#define MMSigProc_getState(sp)              ((MMSigProc*)sp)->state
+#define MMSigProc_setState(sp,val)          MMSigProc_getState(sp) = val
+#define MMSigProc_getDoneAction(sp)         ((MMSigProc*)sp)->doneAction
+#define MMSigProc_setDoneAction(sp,val)     MMSigProc_getDoneAction(sp) = val
+#define MMSigProc_insertAfter(whom,who)     MMDLList_insertAfter((MMDLList*)whom,(MMDLList*)who)
+#define MMSigProc_insertBefore(whom,who)    MMDLList_insertBefore((MMDLList*)whom,(MMDLList*)who)
+#define MMSigProc_addAfterTail(whom,who)    MMDLList_addAfterTail((MMDLList*)whom,(MMDLList*)who)
+#define MMSigProc_addBeforeHead(whom,who)   MMDLList_addBeforeHead((MMDLList*)whom,(MMDLList*)who)
+#define MMSigProc_remove(who)               MMDLList_remove((MMDLList*)who)
 
 void MMSigProc_init(MMSigProc *sp);
 MMSigProc *MMSigProc_new(void);

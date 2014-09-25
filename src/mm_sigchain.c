@@ -20,8 +20,3 @@ void MMSigChain_init(MMSigChain *sc)
     MMSigProc_init(&(sc->sigProcs));
     ((MMSigProc*)sc)->tick = MMSigChain_tick; /* put in new tick function for this sub class */
 }
-
-void MMSigChain_markToFree(MMSigChain *sc, MMSigProc *sp MMSigProc_FreeFunc *freeFunc)
-{
-    
-
