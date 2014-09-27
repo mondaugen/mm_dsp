@@ -13,7 +13,6 @@ MMSigProc_Err MMSamplePlayerSigProc_tick(MMSigProc *sp)
     if (MMSigProc_getState(sp) == MMSigProc_State_DONE) {
         return MMSigProc_Err_IDLE;
     }
-    size_t i;
     MMSamplePlayerSigProc *spsp = (MMSamplePlayerSigProc*)sp;
     /* we could have a switch for interpolation here... */
     *(spsp->parent->outBus) += MMWavTab_get(*(spsp->samples),spsp->index);
