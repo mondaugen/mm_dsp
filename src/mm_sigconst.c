@@ -5,10 +5,17 @@ MMSigProc_Err MMSigConst_tick(MMSigProc *sp)
     if (!MMSigConst_getOutBus(sp)) {
         return MMSigProc_Err_NOTINIT; 
     }
-    if (MMSigConst_getDoSum(sp)) {
-        *(MMSigConst_getOutBus(sp)) += MMSigConst_getConstant(sp);
-    } else {
-        *(MMSigConst_getOutBus(sp)) = MMSigConst_getConstant(sp);
+    size_t i, j;
+    for (i = 0; 
+         i < (MMSigConst_getOutBus(sp)->size * MMSigConst_getOutBus(sp)->channels);
+         i += MMSigConst_getOutBus(sp)->channels) {
+        for (j = 0; j < MMSigConst_getOutBus(sp)->channels; j++) {
+            if (MMSigConst_getDoSum(sp)) {
+                MMSigConst_getOutBus(sp)->data[i+j] += MMSigConst_getConstant(sp);
+            } else {
+                MMSigConst_getOutBus(sp)->data[i+j] = MMSigConst_getConstant(sp);
+            }
+        }
     }
     return MMSigProc_Err_GOOD;
 }

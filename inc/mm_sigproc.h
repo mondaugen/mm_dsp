@@ -61,6 +61,7 @@ struct __MMSigProc {
 
 void MMSigProc_init(MMSigProc *sp);
 MMSigProc *MMSigProc_new(void);
+MMSigProc_Err MMSigProc_defaultTick(MMSigProc *sp);
 
 /* #define MMSigProc_handleState(sp) ((MMSigProc*)sp)->handleState((MMSigProc*)sp); */
 

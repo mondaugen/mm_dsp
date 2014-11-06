@@ -1,4 +1,5 @@
 #include "mm_sampleplayer.h" 
+#include "mm_stdlib.h" 
 #include <string.h> 
 
 /* Writes a sample according to lookup speed and wavetable into the busses of
@@ -14,19 +15,21 @@ MMSigProc_Err MMSamplePlayerSigProc_tick(MMSigProc *sp)
         return MMSigProc_Err_IDLE;
     }
     MMSamplePlayerSigProc *spsp = (MMSamplePlayerSigProc*)sp;
-    /* we could have a switch for interpolation here... */
-    *(spsp->parent->outBus) += MMWavTab_get(*(spsp->samples),spsp->index);
-    spsp->index += spsp->rate;
-    if (spsp->loop) {
-        while (spsp->index >= spsp->samples->length) {
-            spsp->index -= spsp->samples->length;
+    size_t i, j;
+    for (i = 0; 
+         i < (spsp->parent->outBus->size * spsp->parent->outBus->channels);
+         i += spsp->parent->outBus->channels) {
+        for (j = 0; j < spsp->parent->outBus->channels; j++) {
+            spsp->parent->outBus->data[i+j] += MMWavTab_get(*(spsp->samples),spsp->index);
+            spsp->index += spsp->rate;
+            if (spsp->loop) {
+                spsp->index = mm_fwrap(spsp->index,spsp->samples->length);
+            } else if ((spsp->index >= spsp->samples->length)
+                    || (spsp->index < 0)) {
+                MMSigProc_setState(spsp,MMSigProc_State_DONE);
+                i = (spsp->parent->outBus->size * spsp->parent->outBus->channels);
+            }
         }
-        while (spsp->index < 0) {
-            spsp->index += spsp->samples->length;
-        }
-    } else if ((spsp->index >= spsp->samples->length)
-            || (spsp->index < 0)) {
-        MMSigProc_setState(spsp,MMSigProc_State_DONE);
     }
     /* we handle the doneAction */
     if ((MMSigProc_getState(spsp) == MMSigProc_State_DONE) 
@@ -35,6 +38,7 @@ MMSigProc_Err MMSamplePlayerSigProc_tick(MMSigProc *sp)
     }
     return MMSigProc_Err_GOOD;
 }
+
 
 MMSamplePlayerSigProc *MMSamplePlayerSigProc_new(void)
 {

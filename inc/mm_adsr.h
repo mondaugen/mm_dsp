@@ -18,7 +18,7 @@ typedef enum {
 typedef struct __MMAdsr MMAdsr;
 struct __MMAdsr {
     MMSigProc head;
-    MMBus bus;              /* bus enveloped by this ADSR */
+    MMBus *bus;              /* bus enveloped by this ADSR */
     MMSample value;         /* the current value of the ADSR */
     MMAdsr_State state;
     MMSample attack;        /* time in seconds */

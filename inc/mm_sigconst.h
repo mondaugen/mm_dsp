@@ -11,7 +11,7 @@ typedef struct __MMSigConst MMSigConst;
 
 struct __MMSigConst {
     MMSigProc head;
-    MMBus outBus;
+    MMBus *outBus;
     MMSample constant;
     MMBool doSum;
 };
