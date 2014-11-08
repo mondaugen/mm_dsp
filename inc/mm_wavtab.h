@@ -8,6 +8,6 @@ typedef MMArray MMWavTab;
 
 /* Table lookup, no interpolation. dest is a pointer to a Sample type. Wavtab is
  * instance of MMWavTab */
-#define MMWavTab_get(wavtab,index) MMArray_get(wavtab,MMSample,(size_t)index);
+#define MMWavTab_get(wavtab,index) MMArray_get(wavtab,MMSample,(size_t)index)
 
 #endif /* MM_WAVTAB_H */

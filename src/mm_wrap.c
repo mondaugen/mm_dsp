@@ -1,5 +1,26 @@
 #include "mm_wrap.h" 
 
+int MM_wrap(int x, int a, int b)
+{
+    if(a>b){
+        /* swap entries */
+        int tmp = a;
+        a = b;
+        b = tmp;
+    }
+    int N = 0;
+    if (x < a) {
+        N = (int) ((x - a) / (b - a)) - 1;
+    }
+    x -= N * (b - a);
+    N = 0;
+    if (x >= b) {
+        N = (int) ((x - b) / (b - a)) + 1;
+    }
+    x -= N * (b - a);
+    return x;
+}
+
 MMSample MM_fwrap(MMSample x, MMSample a, MMSample b)
 {
     if(a>b){
@@ -8,19 +29,15 @@ MMSample MM_fwrap(MMSample x, MMSample a, MMSample b)
         a = b;
         b = tmp;
     }
-    //if(a==b)
-    //    return a;
-    //if(x >= a){
-    //    return fmod(x-a, b-a) + a;
-    //}else{
-    //    return (b-a) + fmod(x-a, b-a) + a;
-    //}
-    /* Not the fastest implementation but has the desired result */
-    while (x >= b) {
-        x -= (b - a);
+    int N = 0;
+    if (x < a) {
+        N = (int) ((x - a) / (b - a)) - 1;
     }
-    while (x < a) {
-        x += (b - a);
+    x -= N * (b - a);
+    N = 0;
+    if (x >= b) {
+        N = (int) ((x - b) / (b - a)) + 1;
     }
+    x -= N * (b - a);
     return x;
 }

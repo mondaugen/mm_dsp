@@ -3,6 +3,13 @@
 
 #include "mm_sample.h" 
 
+typedef enum
+{
+    MMInterpMethod_NONE,
+    MMInterpMethod_LINEAR,
+    MMInterpMethod_CUBIC
+} MMInterpMethod;
+
 /* Linear interpolation. Make line from points (x1,y1) and (x2,y2) and look up
  * the value x on this line. */
 #define MM_f_interp_linear_(x1,y1,x2,y2,x) (((((MMSample)(y2)) - ((MMSample)(y1)))\
@@ -17,5 +24,13 @@
      (((x - x0) * (x - x2) * (x - x3)) / ((x1 - x0) * (x1 - x2) * (x1 - x3))) * y1 + \
      (((x - x0) * (x - x1) * (x - x3)) / ((x2 - x0) * (x2 - x1) * (x2 - x3))) * y2 + \
      (((x - x0) * (x - x1) * (x - x2)) / ((x3 - x0) * (x3 - x1) * (x3 - x1))) * y3) 
+
+/* Cubic interpolation but assume spacing between x coordinates changes by
+ * increments of 1. x must be positive. */
+#define MM_f_interp_cubic_norm_(y0,y1,y2,y3,x) \
+    (-(x - (MMSample)((int)x)) * ((x - (MMSample)((int)x)) - 1) * ((x - (MMSample)((int)x)) - 2) / 6. * y0 + \
+    ((x - (MMSample)((int)x)) + 1) * ((x - (MMSample)((int)x)) - 1) * ((x - (MMSample)((int)x)) - 2) / 2. * y1 + \
+    -((x - (MMSample)((int)x)) + 1) * (x - (MMSample)((int)x)) * ((x - (MMSample)((int)x)) - 2) / 2. * y2 + \
+    ((x - (MMSample)((int)x)) + 1) * (x - (MMSample)((int)x)) * ((x - (MMSample)((int)x)) - 1) / 6. * y3)
 
 #endif /* MM_INTERP_H */

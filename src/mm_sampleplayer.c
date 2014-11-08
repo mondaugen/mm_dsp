@@ -15,20 +15,37 @@ MMSigProc_Err MMSamplePlayerSigProc_tick(MMSigProc *sp)
         return MMSigProc_Err_IDLE;
     }
     MMSamplePlayerSigProc *spsp = (MMSamplePlayerSigProc*)sp;
-    size_t i, j;
+    size_t i;
     for (i = 0; 
          i < (spsp->parent->outBus->size * spsp->parent->outBus->channels);
          i += spsp->parent->outBus->channels) {
-        for (j = 0; j < spsp->parent->outBus->channels; j++) {
-            spsp->parent->outBus->data[i+j] += MMWavTab_get(*(spsp->samples),spsp->index);
-            spsp->index += spsp->rate;
-            if (spsp->loop) {
-                spsp->index = mm_fwrap(spsp->index,spsp->samples->length);
-            } else if ((spsp->index >= spsp->samples->length)
-                    || (spsp->index < 0)) {
-                MMSigProc_setState(spsp,MMSigProc_State_DONE);
-                i = (spsp->parent->outBus->size * spsp->parent->outBus->channels);
-            }
+        /* The sample player is only compatible with busses of one channel, so
+         * it will just write something to the first channel (0) and nothing to
+         * the remaining channels */
+        switch (spsp->interp) {
+            case MMInterpMethod_NONE:
+                MMSamplePlayerSigProc_getSampleInterpNone_(spsp,
+                        spsp->parent->outBus->data + i);
+                break;
+            case MMInterpMethod_LINEAR:
+                MMSamplePlayerSigProc_getSampleInterpLinear_(spsp,
+                        spsp->parent->outBus->data + i);
+                break;
+            case MMInterpMethod_CUBIC:
+                MMSamplePlayerSigProc_getSampleInterpCubic_(spsp,
+                        spsp->parent->outBus->data + i);
+                break;
+            default:
+                *(spsp->parent->outBus->data + i) = 0;
+                break;
+        }
+        spsp->index += spsp->rate;
+        if (spsp->loop) {
+            spsp->index = MM_fwrap(spsp->index, 0, spsp->samples->length);
+        } else if ((spsp->index >= spsp->samples->length)
+                || (spsp->index < 0)) {
+            MMSigProc_setState(spsp,MMSigProc_State_DONE);
+            i = (spsp->parent->outBus->size * spsp->parent->outBus->channels);
         }
     }
     /* we handle the doneAction */

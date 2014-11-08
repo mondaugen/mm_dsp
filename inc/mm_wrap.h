@@ -4,6 +4,7 @@
 #include "mm_sample.h" 
 
 /*  wrap the value of x so it stays in interval [a,b) */
+int MM_wrap(int x, int a, int b);
 MMSample MM_fwrap(MMSample x, MMSample a, MMSample b);
 
 #endif /* MM_WRAP_H */
