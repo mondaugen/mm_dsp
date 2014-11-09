@@ -32,7 +32,7 @@ MMSigProc_Err MMSamplePlayerSigProc_tick(MMSigProc *sp)
                         spsp->parent->outBus->data + i);
                 break;
             case MMInterpMethod_CUBIC:
-                MMSamplePlayerSigProc_getSampleInterpCubic_(spsp,
+                MMSamplePlayerSigProc_getSampleInterpCubicMu_(spsp,
                         spsp->parent->outBus->data + i);
                 break;
             default:

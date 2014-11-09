@@ -59,6 +59,7 @@ void MMSamplePlayer_init(MMSamplePlayer *sp);
                 (spsp)->index); \
     } while (0)
     
+/* This is slow and sucks */
 #define MMSamplePlayerSigProc_getSampleInterpCubic_(spsp,pdest) \
     do { \
         int __x0 = MM_wrap((int)(spsp)->index - 1, 0, (int)(spsp)->samples->length); \
@@ -75,6 +76,7 @@ void MMSamplePlayer_init(MMSamplePlayer *sp);
                 MMWavTab_get(*((spsp)->samples), __x3), \
                 (spsp)->index); \
     } while (0)
+
 #define MMSamplePlayerSigProc_getSampleInterpCubicNorm_(spsp,pdest) \
     do { \
         int __x0 = MM_wrap((int)(spsp)->index - 1, 0, (int)(spsp)->samples->length); \
@@ -87,6 +89,21 @@ void MMSamplePlayer_init(MMSamplePlayer *sp);
                 MMWavTab_get(*((spsp)->samples), __x2), \
                 MMWavTab_get(*((spsp)->samples), __x3), \
                 (spsp)->index); \
+    } while (0)
+
+/* Uses the "mu" cubic interpolation */
+#define MMSamplePlayerSigProc_getSampleInterpCubicMu_(spsp,pdest) \
+    do { \
+        int __x0 = MM_wrap((int)(spsp)->index - 1, 0, (int)(spsp)->samples->length); \
+        int __x1 = MM_wrap((int)(spsp)->index    , 0, (int)(spsp)->samples->length); \
+        int __x2 = MM_wrap((int)(spsp)->index + 1, 0, (int)(spsp)->samples->length); \
+        int __x3 = MM_wrap((int)(spsp)->index + 2, 0, (int)(spsp)->samples->length); \
+        MMSample __y0 = MMWavTab_get(*((spsp)->samples),__x0); \
+        MMSample __y1 = MMWavTab_get(*((spsp)->samples),__x1); \
+        MMSample __y2 = MMWavTab_get(*((spsp)->samples),__x2); \
+        MMSample __y3 = MMWavTab_get(*((spsp)->samples),__x3); \
+        *(pdest) += MM_f_interp_cubic_mu_(__y0, __y1, __y2, __y3, \
+                (spsp)->index - (int)((spsp)->index)); \
     } while (0)
 
 #endif /* MM_SAMPLEPLAYER_H */
