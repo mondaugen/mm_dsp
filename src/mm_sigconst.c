@@ -21,12 +21,12 @@ MMSigProc_Err MMSigConst_tick(MMSigProc *sp)
 }
         
 /* Initializes tick function, bus to NULL, constant to 0 and doSum to 0 */
-void MMSigConst_init(MMSigConst *sc)
+void MMSigConst_init(MMSigConst *sc, MMBus *outBus, MMSample constant, MMSigConst_doSum doSum)
 {
     MMSigProc_init((MMSigProc*)sc);
     MMSigProc_setTick(sc,MMSigConst_tick);
-    MMSigConst_setOutBus(sc,NULL);
-    MMSigConst_setConstant(sc,0);
-    MMSigConst_setDoSum(sc,0);
+    MMSigConst_setOutBus(sc,outBus);
+    MMSigConst_setConstant(sc,constant);
+    MMSigConst_setDoSum(sc,doSum);
 }
 

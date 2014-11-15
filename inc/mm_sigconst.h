@@ -4,8 +4,12 @@
  * signal or not. */
 #include "mm_sigproc.h"
 #include "mm_sample.h"
-#include "mm_bool.h"
 #include "mm_bus.h" 
+
+typedef enum {
+    MMSigConst_doSum_FALSE,
+    MMSigConst_doSum_TRUE,
+} MMSigConst_doSum;
 
 typedef struct __MMSigConst MMSigConst;
 
@@ -13,7 +17,7 @@ struct __MMSigConst {
     MMSigProc head;
     MMBus *outBus;
     MMSample constant;
-    MMBool doSum;
+    MMSigConst_doSum doSum;
 };
 
 #define MMSigConst_getOutBus(sc) ((MMSigConst*)sc)->outBus 
@@ -23,6 +27,6 @@ struct __MMSigConst {
 #define MMSigConst_getDoSum(sc) ((MMSigConst*)sc)->doSum
 #define MMSigConst_setDoSum(sc,val) MMSigConst_getDoSum(sc) = val
 
-void MMSigConst_init(MMSigConst *sc);
+void MMSigConst_init(MMSigConst *sc, MMBus *outBus, MMSample constant, MMSigConst_doSum doSum);
 
 #endif /* MM_SIGCONST_H */
