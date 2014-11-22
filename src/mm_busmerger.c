@@ -24,3 +24,12 @@ static MMSigProc_Err MMBusMerger_tick(MMSigProc *bm)
     }
     return result;
 }
+
+void MMBusMerger_init(MMBusMerger *bm, MMBus *sourceBus, MMBus *destBus)
+{
+    MMSigProc_init(bm);
+    bm->sourceBus = sourceBus;
+    bm->destBus;
+    MMSigProc_setTick(bm,MMBusMerger_tick);
+}
+    

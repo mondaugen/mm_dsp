@@ -1,6 +1,9 @@
 #ifndef MM_BUSMERGER_H
 #define MM_BUSMERGER_H 
 
+#include "mm_sigproc.h"
+#include "mm_bus.h" 
+
 /* Allows one bus to write into another bus, mixing with contents of the
  * destination bus */
 
@@ -12,5 +15,6 @@ struct __MMBusMerger {
     MMBus *destBus;
 }
 
+void MMBusMerger_init(MMBusMerger *bm, MMBus *sourceBus, MMBus *destBus);
 
 #endif /* MM_BUSMERGER_H */
