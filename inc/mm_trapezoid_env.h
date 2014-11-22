@@ -7,7 +7,7 @@ typedef enum {
     MMTrapezoidEnvState_OFF,
     MMTrapezoidEnvState_ATTACK,
     MMTrapezoidEnvState_SUSTAIN,
-    MMTrapezoidEnvState_RELEASE
+    MMTrapezoidEnvState_RELEASE,
 } MMTrapezoidEnvState;
 
 typedef struct __MMTrapezoidEnv {

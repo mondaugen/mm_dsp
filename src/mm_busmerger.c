@@ -5,7 +5,7 @@ static MMSigProc_Err MMBusMerger_tick(MMSigProc *bm)
 {
     /* Call superclass tick method */
     MMSigProc_Err result;
-    if ((result = MMSigProc_defaultTick(enver)) != MMSigProc_Err_GOOD) {
+    if ((result = MMSigProc_defaultTick(bm)) != MMSigProc_Err_GOOD) {
         return result;
     }
 #ifdef MM_DSP_DEBUG 
@@ -17,9 +17,11 @@ static MMSigProc_Err MMBusMerger_tick(MMSigProc *bm)
     }
 #endif /* MM_DSP_DEBUG */ 
     size_t i, j;
-    for (i = 0; i < bm->sourceBus->size; i += bm->sourceBus->channels) {
-        for (j = 0; j < bm->sourceBus->channels; j++) {
-            bm->destBus->data[i + j] += bm->sourceBus->data[i + j];
+    for (i = 0; i < ((MMBusMerger*)bm)->sourceBus->size;
+            i += ((MMBusMerger*)bm)->sourceBus->channels) {
+        for (j = 0; j < ((MMBusMerger*)bm)->sourceBus->channels; j++) {
+            ((MMBusMerger*)bm)->destBus->data[i + j] 
+                    += ((MMBusMerger*)bm)->sourceBus->data[i + j];
         }
     }
     return result;
@@ -27,9 +29,9 @@ static MMSigProc_Err MMBusMerger_tick(MMSigProc *bm)
 
 void MMBusMerger_init(MMBusMerger *bm, MMBus *sourceBus, MMBus *destBus)
 {
-    MMSigProc_init(bm);
+    MMSigProc_init((MMSigProc*)bm);
     bm->sourceBus = sourceBus;
-    bm->destBus;
+    bm->destBus = destBus;
     MMSigProc_setTick(bm,MMBusMerger_tick);
 }
     

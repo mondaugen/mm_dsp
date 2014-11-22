@@ -13,7 +13,7 @@ struct __MMBusMerger {
     MMSigProc head;
     MMBus *sourceBus;
     MMBus *destBus;
-}
+};
 
 void MMBusMerger_init(MMBusMerger *bm, MMBus *sourceBus, MMBus *destBus);
 

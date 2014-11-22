@@ -7,6 +7,8 @@
 #include "mm_envelope.h"
 #include "mm_enveloper.h" 
 #include "mm_bus.h" 
+#include "mm_sigconst.h" 
+#include "mm_busmerger.h" 
 
 typedef struct __MMEnvedSamplePlayer MMEnvedSamplePlayer;
 
@@ -15,7 +17,7 @@ struct __MMEnvedSamplePlayer {
     MMSigChain sigChain;
     MMSigConst sigConst;
     MMSamplePlayer sp;
-    MMSamplerPlayerSigProc spsp;
+    MMSamplePlayerSigProc spsp;
     MMEnveloper enver;
     MMBusMerger bm;
     MMBus *internalBus;
@@ -23,5 +25,8 @@ struct __MMEnvedSamplePlayer {
 
 void MMEnvedSamplePlayer_init(MMEnvedSamplePlayer *esp, MMEnvelope *env, MMBus *outBus,
         size_t internalBusSize, MMSample tickPeriod);
+
+#define MMEnvedSamplePlayer_getSamplePlayerSigProc(esp) ((MMEnvedSamplePlayer*)(esp))->spsp
+#define MMEnvedSamplePlayer_getEnveloper(esp) ((MMEnvedSamplePlayer*)(esp))->enver 
 
 #endif /* MM_ENVEDSAMPLEPLAYER_H */

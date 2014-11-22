@@ -4,31 +4,30 @@ static MMSigProc_Err MMEnvedSamplePlayer_tick(MMSigProc *esp)
 {
     /* Call superclass tick method */
     MMSigProc_Err result;
-    if ((result = MMSigProc_defaultTick(enver)) != MMSigProc_Err_GOOD) {
+    if ((result = MMSigProc_defaultTick(esp)) != MMSigProc_Err_GOOD) {
         return result;
     }
-    MMSigProc_tick(&esp->sigChain);
+    MMSigProc_tick(&((MMEnvedSamplePlayer*)esp)->sigChain);
 }
-    
 
 void MMEnvedSamplePlayer_init(MMEnvedSamplePlayer *esp, MMEnvelope *env, MMBus *outBus,
         size_t internalBusSize, MMSample tickPeriod)
 {
-    MMSigProc_init(esp);
+    MMSigProc_init((MMSigProc*)esp);
     MMSigChain_init(&esp->sigChain);
     /* internal bus is only 1 channel */
     esp->internalBus = MMBus_new(internalBusSize,1); 
     /* Init bus merger */
-    MMBusMerger_init(&esp->bm, esp->internalBus, esp->outBus);
+    MMBusMerger_init(&esp->bm, esp->internalBus, outBus);
     /* Add bus merger to top of internal sig chain */
-    MMSigConst_insertAfter(&esp->sigChain.sigProcs, &esp->bm);
+    MMSigProc_insertAfter(&esp->sigChain.sigProcs, &esp->bm);
     /* Init enveloper */
     MMEnveloper_init(&esp->enver, env, esp->internalBus, tickPeriod);
     /* Add enveloper to top of internal sig chain */
-    MMSigConst_insertAfter(&esp->sigChain.sigProcs, &esp->enver);
+    MMSigProc_insertAfter(&esp->sigChain.sigProcs, &esp->enver);
     /* Init sample player */
     MMSamplePlayer_init(&esp->sp);
-    esp->sp.outBus = &esp->internalBus; 
+    esp->sp.outBus = esp->internalBus; 
     /* Add placeholder to top of internal sig chain */
     MMSigProc_insertAfter(&esp->sigChain.sigProcs, &esp->sp.placeHolder);
     /* zero signal at top of internal bus */
@@ -37,7 +36,7 @@ void MMEnvedSamplePlayer_init(MMEnvedSamplePlayer *esp, MMEnvelope *env, MMBus *
     MMSigProc_insertAfter(&esp->sigChain.sigProcs, &esp->sigConst);
     /* Init sample player sig proc */
     MMSamplePlayerSigProc_init(&esp->spsp);
-    esp->spsp.parent = &esp->spsp;
+    esp->spsp.parent = &esp->sp;
     MMSigProc_setState((&esp->spsp),MMSigProc_State_DONE);
     /* Insert at sampleplayer place holder */
     MMSigProc_insertAfter(&esp->sp.placeHolder, &esp->spsp);
