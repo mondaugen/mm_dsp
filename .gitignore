@@ -9,3 +9,5 @@
 tags
 *.dSYM
 *.dat
+*.wav
+*.ascii

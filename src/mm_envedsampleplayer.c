@@ -8,6 +8,7 @@ static MMSigProc_Err MMEnvedSamplePlayer_tick(MMSigProc *esp)
         return result;
     }
     MMSigProc_tick(&((MMEnvedSamplePlayer*)esp)->sigChain);
+    return result;
 }
 
 void MMEnvedSamplePlayer_init(MMEnvedSamplePlayer *esp, MMEnvelope *env, MMBus *outBus,

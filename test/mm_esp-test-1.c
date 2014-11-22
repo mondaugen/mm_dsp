@@ -9,8 +9,8 @@
 #define SAMPLE_RATE 44100
 #define WAVTABLE_LENGTH 8192 
 #define WAVTABLE_PERIODS 4
-#define WAVTABLE_FREQ ((MMSample)SAMPLE_RATE / (MMSample)WAVTABLE_LENGTH \
-        / (MMSample)WAVTABLE_PERIODS)
+#define WAVTABLE_FREQ ((MMSample)SAMPLE_RATE / ((MMSample)WAVTABLE_LENGTH \
+        / (MMSample)WAVTABLE_PERIODS))
 #define BUS_SIZE 512
 #define SILENT_TIME 1 /* 1 second of silence before beginning */ 
 #define ATTACK_TIME 5
@@ -23,13 +23,15 @@ MMWavTab wt;
 void waveTable_init(void)
 {
     /* nice major triad */
-    int ratios[] = {4, 5, 6};
+/*     int ratios[] = {4, 5, 6}; */
+    int ratios[] = {4};
     int i, j;
     memset(waveTable,0,WAVTABLE_LENGTH * sizeof(MMSample));
     for (i = 0; i < (sizeof(ratios) / sizeof(int)); i++) {
         for (j = 0; j < WAVTABLE_LENGTH; j++) {
             waveTable[j] += sin(2. * M_PI
-                    * (MMSample)i / WAVTABLE_LENGTH * ratios[i]);
+                    * (MMSample)j / WAVTABLE_LENGTH * ratios[i]) 
+                    / (MMSample)(sizeof(ratios) / sizeof(int));
         }
     }
 }
@@ -50,7 +52,7 @@ int main (void)
         MMInterpMethod_CUBIC;
     MMEnvedSamplePlayer_getSamplePlayerSigProc(&tesp).index = 0;
     MMEnvedSamplePlayer_getSamplePlayerSigProc(&tesp).rate =
-        pow(2., (53 - 69)) * 440.0 / WAVTABLE_FREQ;
+        pow(2., (53. - 69.) / 12.) * 440.0 / WAVTABLE_FREQ;
     MMSigProc_setState(
             &MMEnvedSamplePlayer_getSamplePlayerSigProc(&tesp),
             MMSigProc_State_PLAYING);
@@ -62,17 +64,22 @@ int main (void)
     MMSigConst sigConst;
     MMSigConst_init(&sigConst, outBus, 0, MMSigConst_doSum_FALSE);
     MMSigProc_insertAfter(&sigChain.sigProcs,&sigConst);
-    int k = SAMPLE_RATE * (DECAY_TIME + SUSTAIN_TIME + SILENT_TIME) 
+    int k = SAMPLE_RATE * (ATTACK_TIME + SUSTAIN_TIME)
         / BUS_SIZE;
     MMEnvelope_startAttack(&MMTrapEnvedSamplePlayer_getTrapezoidEnv(&tesp));
-    while (1) {
+    int busy = 1;
+    while (busy) {
         MMSigProc_tick(&sigChain);
         fwrite(outBus->data, sizeof(MMSample), BUS_SIZE, stdout);
         if (k) {
             k--;
-        } else {
+        } else if (k == 0) {
             MMEnvelope_startRelease(
                  &MMTrapEnvedSamplePlayer_getTrapezoidEnv(&tesp));
+            k--;
+        }
+        if (MMTrapEnvedSamplePlayer_getTrapezoidEnv(&tesp).state == MMTrapezoidEnvState_OFF) {
+            busy = 0;
         }
     }
     return(0);
