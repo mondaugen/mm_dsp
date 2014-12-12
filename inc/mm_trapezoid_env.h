@@ -4,10 +4,9 @@
 #include "mm_rationalfunc.h"
 
 typedef enum {
-    MMTrapezoidEnvState_OFF,
-    MMTrapezoidEnvState_ATTACK,
+    MMTrapezoidEnvState_ATTACK = MMEnvelopeState_DUMMY,
     MMTrapezoidEnvState_SUSTAIN,
-    MMTrapezoidEnvState_RELEASE,
+    MMTrapezoidEnvState_RELEASE
 } MMTrapezoidEnvState;
 
 typedef struct __MMTrapezoidEnv {
@@ -17,7 +16,6 @@ typedef struct __MMTrapezoidEnv {
     MMSample              max;
     MMSample       attackTime;
     MMSample      releaseTime;
-    MMTrapezoidEnvState state;
 } MMTrapezoidEnv;
 
 void MMTrapezoidEnv_init(MMTrapezoidEnv *te,

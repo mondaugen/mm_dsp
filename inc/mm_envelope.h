@@ -3,9 +3,17 @@
 
 #include "mm_sample.h" 
 
+typedef enum {
+    MMEnvelopeState_OFF,
+    /* more values can be added but must end with the last value */
+    MMEnvelopeState_DUMMY /* inheriting classes should start their own 
+                             state enums with this state */
+} MMEnvelopeState;
+
 typedef struct __MMEnvelope MMEnvelope;
 
 struct __MMEnvelope {
+    MMEnvelopeState state;
     MMSample time;
     MMSample (*getCurValue)(MMEnvelope *);
     void     (*incTime)(MMEnvelope *, MMSample); /* Increment time by some delta t */
@@ -21,8 +29,10 @@ struct __MMEnvelope {
 /* casts subclasses to MMEnvelope */
 #define MMEnvelope_get(e)                   ((MMEnvelope*)e)  
 /* set fields */
+#define MMEnvelope_setState(e,s)            MMEnvelope_get(e)->state = s
 #define MMEnvelope_set_time(e,t)            MMEnvelope_get(e)->time = t 
 /* get fields */
+#define MMEnvelope_getState(e)              MMEnvelope_get(e)->state 
 #define MMEnvelope_get_time(e)              MMEnvelope_get(e)->time
 /* Set interfacing methods */
 #define MMEnvelope_set_getCurValue(e,gcv)   MMEnvelope_get(e)->getCurValue = gcv

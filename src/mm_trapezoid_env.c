@@ -6,7 +6,7 @@ static void MMTrapezoidEnv_reset(MMEnvelope *te)
     MMTrapezoidEnv_get(te)->lf.m = 0;
     MMTrapezoidEnv_get(te)->lf.b = MMTrapezoidEnv_get(te)->min;
     MMEnvelope_set_time(te,0);
-    MMTrapezoidEnv_get(te)->state = MMTrapezoidEnvState_OFF;
+    MMEnvelope_setState(te, MMEnvelopeState_OFF);
 }
 
 static MMSample MMTrapezoidEnv_getCurValue(MMEnvelope *te)
@@ -18,21 +18,21 @@ static MMSample MMTrapezoidEnv_getCurValue(MMEnvelope *te)
  * has moved into a different region (attack -> sustain, release -> off) */
 static void MMTrapezoidEnv_incTime(MMEnvelope *te, MMSample deltaTime)
 {
-    if ((MMTrapezoidEnv_get(te)->state == MMTrapezoidEnvState_OFF)
-            || (MMTrapezoidEnv_get(te)->state == MMTrapezoidEnvState_SUSTAIN)) {
+    if ((MMEnvelope_getState(te) == MMEnvelopeState_OFF)
+            || (MMEnvelope_getState(te) == MMTrapezoidEnvState_SUSTAIN)) {
         return;
     }
     MMEnvelope_get_time(te) += deltaTime;
-    if ((MMTrapezoidEnv_get(te)->state == MMTrapezoidEnvState_RELEASE)
-            && (MMEnvelope_get_time(te) >= MMTrapezoidEnv_get(te)->releaseTime)) {
-        /* Release is finished, go to off region */
-        MMLineFunc2D_set_mb(&MMTrapezoidEnv_get(te)->lf, 0, MMTrapezoidEnv_get(te)->min);
-        MMTrapezoidEnv_get(te)->state = MMTrapezoidEnvState_OFF;
-    } else if ((MMTrapezoidEnv_get(te)->state == MMTrapezoidEnvState_ATTACK)
+    if ((MMEnvelope_getState(te) == MMTrapezoidEnvState_ATTACK)
             && (MMEnvelope_get_time(te) >= MMTrapezoidEnv_get(te)->attackTime)) {
         /* Attack is finished, go to sustain region */
         MMLineFunc2D_set_mb(&MMTrapezoidEnv_get(te)->lf, 0, MMTrapezoidEnv_get(te)->max);
-        MMTrapezoidEnv_get(te)->state = MMTrapezoidEnvState_SUSTAIN;
+        MMEnvelope_getState(te) = MMTrapezoidEnvState_SUSTAIN;
+    } else if ((MMEnvelope_getState(te) == MMTrapezoidEnvState_RELEASE)
+            && (MMEnvelope_get_time(te) >= MMTrapezoidEnv_get(te)->releaseTime)) {
+        /* Release is finished, go to off region */
+        MMLineFunc2D_set_mb(&MMTrapezoidEnv_get(te)->lf, 0, MMTrapezoidEnv_get(te)->min);
+        MMEnvelope_getState(te) = MMEnvelopeState_OFF;
     }
 }
 
@@ -41,7 +41,7 @@ static void MMTrapezoidEnv_startAttack(MMEnvelope *te)
     MMSample curVal = MMTrapezoidEnv_getCurValue(te);
     MMLineFunc2D_set_points(&MMTrapezoidEnv_get(te)->lf, 0, curVal, 
             MMTrapezoidEnv_get(te)->attackTime, MMTrapezoidEnv_get(te)->max);
-    MMTrapezoidEnv_get(te)->state = MMTrapezoidEnvState_ATTACK;
+    MMEnvelope_getState(te) = MMTrapezoidEnvState_ATTACK;
     MMEnvelope_get_time(te) = 0;
 }
 
@@ -50,7 +50,7 @@ static void MMTrapezoidEnv_startRelease(MMEnvelope *te)
     MMSample curVal = MMTrapezoidEnv_getCurValue(te);
     MMLineFunc2D_set_points(&MMTrapezoidEnv_get(te)->lf, 0, curVal, 
             MMTrapezoidEnv_get(te)->releaseTime, MMTrapezoidEnv_get(te)->min);
-    MMTrapezoidEnv_get(te)->state = MMTrapezoidEnvState_RELEASE;
+    MMEnvelope_getState(te) = MMTrapezoidEnvState_RELEASE;
     MMEnvelope_get_time(te) = 0;
 }
 
