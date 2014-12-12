@@ -2,8 +2,6 @@
 #include <string.h> 
 #include "mm_sigproc.h" 
 
-/* Global Malloc must have been initialized before running this stuff! */
-
 void MMSigProc_free(void *sp)
 {
     free(sp);
