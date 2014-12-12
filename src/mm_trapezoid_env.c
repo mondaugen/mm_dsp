@@ -34,17 +34,6 @@ static void MMTrapezoidEnv_incTime(MMEnvelope *te, MMSample deltaTime)
         MMLineFunc2D_set_mb(&MMTrapezoidEnv_get(te)->lf, 0, MMTrapezoidEnv_get(te)->max);
         MMTrapezoidEnv_get(te)->state = MMTrapezoidEnvState_SUSTAIN;
     }
-    //if ((MMTrapezoidEnv_get(te)->state == MMTrapezoidEnvState_ATTACK)
-    //        && (MMEnvelope_get_time(te) >= MMTrapezoidEnv_get(te)->attackTime)) {
-    //    /* Attack is finished, go to sustain region */
-    //    MMLineFunc2D_set_mb(&MMTrapezoidEnv_get(te)->lf, 0, MMTrapezoidEnv_get(te)->max);
-    //    MMTrapezoidEnv_get(te)->state = MMTrapezoidEnvState_SUSTAIN;
-    //} else if ((MMTrapezoidEnv_get(te)->state == MMTrapezoidEnvState_RELEASE)
-    //        && (MMEnvelope_get_time(te) >= MMTrapezoidEnv_get(te)->releaseTime)) {
-    //    /* Release is finished, go to off region */
-    //    MMLineFunc2D_set_mb(&MMTrapezoidEnv_get(te)->lf, 0, MMTrapezoidEnv_get(te)->min);
-    //    MMTrapezoidEnv_get(te)->state = MMTrapezoidEnvState_OFF;
-    //}
 }
 
 static void MMTrapezoidEnv_startAttack(MMEnvelope *te)
