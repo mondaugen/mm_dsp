@@ -1,5 +1,9 @@
 #include "mm_envedsampleplayer.h" 
 
+static void MMEnvedSamplePlayer_onDone_default(MMEnvedSamplePlayer *esp) {
+    return;
+}
+
 static MMSigProc_Err MMEnvedSamplePlayer_tick(MMSigProc *esp)
 {
     /* Call superclass tick method */
@@ -8,6 +12,9 @@ static MMSigProc_Err MMEnvedSamplePlayer_tick(MMSigProc *esp)
         return result;
     }
     MMSigProc_tick(&((MMEnvedSamplePlayer*)esp)->sigChain);
+    if (MMEnvedSamplePlayer_getEnveloper(esp).env->state == MMEnvelopeState_OFF) {
+        MMEnvedSamplePlayer_doOnDone(esp);
+    }
     return result;
 }
 
@@ -42,4 +49,6 @@ void MMEnvedSamplePlayer_init(MMEnvedSamplePlayer *esp, MMEnvelope *env, MMBus *
     /* Insert at sampleplayer place holder */
     MMSigProc_insertAfter(&esp->sp.placeHolder, &esp->spsp);
     MMSigProc_setTick(esp, MMEnvedSamplePlayer_tick);
+    /* Set default on done action */
+    esp->onDone = MMEnvedSamplePlayer_onDone_default;
 }
