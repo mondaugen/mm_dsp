@@ -26,6 +26,10 @@ struct __MMSamplePlayerSigProc {
     MMWavTab      *samples;
     MMSample         index;
     MMSample          rate;
+    MMSample          note; /* the midi note of this instance, because rate may
+                               be modulated so we need something static to
+                               compare to check if a particular note is sounding
+                               */
     MMSamplePlayer *parent; /* where it gets its placeHolder and outBusses from */
     MMBool            loop;
     MMInterpMethod  interp;

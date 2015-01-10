@@ -1,11 +1,9 @@
 /* An poly voice for an trapezoid enveloped sample player */
 /* This is sort of a proof-of-concept and will probably become obsolete when the
  * MMEnvedSamplePlayer is generalized for arbitrary envelopes */
+#include "mmpv_tesp.h" 
 #include "mm_poly_voice_manage.h" 
 #include "mm_trapenvedsampleplayer.h" 
-#include "mm_sample.h" 
-
-typedef struct __MMPvtesp MMPvtesp;
 
 struct __MMPvtesp {
     MMPolyVoice head;
@@ -19,23 +17,6 @@ typedef enum {
                                    note finished decaying */
 } MMPvtespParamType;
 
-typedef struct __MMPvtespParams MMPvtespParams;
-
-/* On a note on you can indicate note (MIDI note where 60 = middle C, but can be
- * of type MMSample), amplitude (MMSample), interpolation (one of
- * MMInterpMethod), starting index (samples), attack time (seconds), release
- * time (seconds, can be changed later before the note off, so it is not
- * critical here), samples (pointer to WavTav) */
-struct __MMPvtespParams {
-    MMPvtespParamType paramType;
-    MMSample        note;
-    MMSample        amplitude;
-    MMInterpMethod  interpolation;
-    MMSample        index;
-    MMSample        attackTime;
-    MMSample        releaseTime;
-    WavTav          *samples;
-};
 
 static void MMPvtesp_turnOn(MMPolyVoice *pv, void *params)
 {
@@ -87,5 +68,27 @@ static int MMPvtesp_compare(MMPolyVoice *pv, void *params)
 {
     MMTrapEnvedSamplePlayer *tesp = ((MMPvtesp*)pv)->tesp;
     MMPvtespParams *np = (MMPvtespParams*)params;
+    if (MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).note == np->note) {
+        return 0;
+    }
+    return 1;
 }
-    
+
+static int MMPvtesp_init(MMPvtesp *pvtesp, MMTrapEnvedSamplePlayer *tesp)
+{
+    MMPolyVoice_set_turnOn(pvtesp, MMPvtesp_turnOn);
+    MMPolyVoice_set_turnOff(pvtesp, MMPvtesp_turnOff);
+    MMPolyVoice_set_compare(pvtesp, MMPvtesp_compare);
+    MMPolyVoice_set_attachOnTurnOff(pvtesp, MMPvtesp_attachOnTurnOff);
+    MMPolyVoice_set_used(pvtesp, MMPolyVoiceUsed_FALSE);
+    pvtesp->tesp = tesp;
+};
+
+MMPvtesp *MMPvtesp_new(MMTrapEnvedSamplePlayer *tesp)
+{
+    MMPvtesp *result = (MMPvtesp*)malloc(sizeof(MMPvtesp));
+    if (result) {
+        MMPvtesp_init(result,tesp);
+    }
+    return result;
+}

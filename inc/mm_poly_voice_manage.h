@@ -30,6 +30,7 @@ struct __MMPolyVoice {
     MMPolyVoiceUsed used;
 };
 
+#define MMPolyVoice_set_used(pv,u)            ((MMPolyVoice*)pv)->used = u
 #define MMPolyVoice_set_turnOn(pv,f)          ((MMPolyVoice*)pv)->turnOn = f
 #define MMPolyVoice_set_turnOff(pv,f)         ((MMPolyVoice*)pv)->turnOff = f
 #define MMPolyVoice_set_compare(pv,f)         ((MMPolyVoice*)pv)->compare  = f
