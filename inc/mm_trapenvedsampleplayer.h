@@ -14,6 +14,16 @@ struct __MMTrapEnvedSamplePlayer {
 void MMTrapEnvedSamplePlayer_init(MMTrapEnvedSamplePlayer *tesp, MMBus *outBus,
         size_t internalBusSize, MMSample tickPeriod);
 
+void MMTrapEnvedSamplePlayer_noteOn(
+        MMTrapEnvedSamplePlayer *tesp,
+        MMSample        note,
+        MMSample        amplitude,
+        MMInterpMethod  interpolation,
+        MMSample        index,
+        MMSample        attackTime,
+        MMSample        releaseTime,
+        WavTav          *samples);
+
 #define MMTrapEnvedSamplePlayer_getTrapezoidEnv(tesp) ((MMTrapEnvedSamplePlayer*)(tesp))->te
 
 #endif /* MM_TRAPENVEDSAMPLEPLAYER_H */
