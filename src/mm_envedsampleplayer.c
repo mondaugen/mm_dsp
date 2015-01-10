@@ -50,5 +50,5 @@ void MMEnvedSamplePlayer_init(MMEnvedSamplePlayer *esp, MMEnvelope *env, MMBus *
     MMSigProc_insertAfter(&esp->sp.placeHolder, &esp->spsp);
     MMSigProc_setTick(esp, MMEnvedSamplePlayer_tick);
     /* Set default on done action */
-    esp->onDone = MMEnvedSamplePlayer_onDone_default;
+    esp->onDone = NULL;
 }

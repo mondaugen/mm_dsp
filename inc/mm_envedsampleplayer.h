@@ -1,6 +1,7 @@
 #ifndef MM_ENVEDSAMPLEPLAYER_H
 #define MM_ENVEDSAMPLEPLAYER_H 
 
+#include <stddef.h> 
 #include "mm_sigproc.h" 
 #include "mm_sigchain.h"
 #include "mm_sampleplayer.h" 
@@ -21,7 +22,8 @@ struct __MMEnvedSamplePlayer {
     MMEnveloper enver;
     MMBusMerger bm;
     MMBus *internalBus;
-    void (*onDone)(MMEnvedSamplePlayer*);
+    void (*onDone)(MMEnvedSamplePlayer*, void*);
+    void *onDoneParams;
 };
 
 void MMEnvedSamplePlayer_init(MMEnvedSamplePlayer *esp, MMEnvelope *env, MMBus *outBus,
@@ -30,6 +32,7 @@ void MMEnvedSamplePlayer_init(MMEnvedSamplePlayer *esp, MMEnvelope *env, MMBus *
 #define MMEnvedSamplePlayer_getSamplePlayerSigProc(esp) ((MMEnvedSamplePlayer*)(esp))->spsp
 #define MMEnvedSamplePlayer_getEnveloper(esp) ((MMEnvedSamplePlayer*)(esp))->enver 
 #define MMEnvedSamplePlayer_doOnDone(esp) \
-    ((MMEnvedSamplePlayer*)esp)->onDone((MMEnvedSamplePlayer*)esp)
+    esp ? ((MMEnvedSamplePlayer*)esp)->onDone((MMEnvedSamplePlayer*)esp, \
+            ((MMEnvedSamplePlayer*)esp)->onDoneParams) : esp
 
 #endif /* MM_ENVEDSAMPLEPLAYER_H */
