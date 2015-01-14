@@ -16,7 +16,7 @@ void MMTrapEnvedSamplePlayer_noteOn(
         MMSample        index,
         MMSample        attackTime,
         MMSample        releaseTime,
-        WavTav          *samples)
+        MMWavTab          *samples)
 {
     MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).interp = interpolation;
     MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).index = index;

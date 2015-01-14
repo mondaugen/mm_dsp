@@ -2,11 +2,19 @@
 #define MMPV_TESP_H 
 
 #include "mm_sample.h" 
+#include "mm_wavtab.h" 
 #include "mm_trapenvedsampleplayer.h" 
 
 typedef struct __MMPvtesp MMPvtesp;
 
 typedef struct __MMPvtespParams MMPvtespParams;
+
+typedef enum {
+    MMPvtespParamType_NOTEON,   /* parameters for a note on */
+    MMPvtespParamType_NOTEOFF,  /* parameters for a note off */
+    MMPvtespParamType_ONDONE    /* parameters for when called as a callback when
+                                   note finished decaying */
+} MMPvtespParamType;
 
 /* On a note on you can indicate note (MIDI note where 60 = middle C, but can be
  * of type MMSample), amplitude (MMSample), interpolation (one of
@@ -21,7 +29,7 @@ struct __MMPvtespParams {
     MMSample        index;
     MMSample        attackTime;
     MMSample        releaseTime;
-    WavTav          *samples;
+    MMWavTab          *samples;
 };
 
 MMPvtesp *MMPvtesp_new(MMTrapEnvedSamplePlayer *tesp);

@@ -3,19 +3,12 @@
  * MMEnvedSamplePlayer is generalized for arbitrary envelopes */
 #include "mmpv_tesp.h" 
 #include "mm_poly_voice_manage.h" 
-#include "mm_trapenvedsampleplayer.h" 
 
 struct __MMPvtesp {
     MMPolyVoice head;
     MMTrapEnvedSamplePlayer *tesp;
 };
 
-typedef enum {
-    MMPvtespParamType_NOTEON,   /* parameters for a note on */
-    MMPvtespParamType_NOTEOFF,  /* parameters for a note off */
-    MMPvtespParamType_ONDONE    /* parameters for when called as a callback when
-                                   note finished decaying */
-} MMPvtespParamType;
 
 
 static void MMPvtesp_turnOn(MMPolyVoice *pv, void *params)
@@ -36,7 +29,7 @@ static void MMPvtesp_turnOff(MMPolyVoice *pv, void *params)
      * parameter type is NOTEON on NOTEOFF we just use the releaseTime. The only
      * difference is that for NOTEON, the release time should probably be
      * shorter (but this function is not responsible for this) */
-    MMTrapEnvedSamplePlayer_getTrapezoidEnv(tesp).releaseTime = params->releaseTime;
+    MMTrapEnvedSamplePlayer_getTrapezoidEnv(tesp).releaseTime = np->releaseTime;
     MMEnvelope_startRelease(&MMTrapEnvedSamplePlayer_getTrapezoidEnv(tesp));
 }
 
@@ -74,7 +67,7 @@ static int MMPvtesp_compare(MMPolyVoice *pv, void *params)
     return 1;
 }
 
-static int MMPvtesp_init(MMPvtesp *pvtesp, MMTrapEnvedSamplePlayer *tesp)
+static void MMPvtesp_init(MMPvtesp *pvtesp, MMTrapEnvedSamplePlayer *tesp)
 {
     MMPolyVoice_set_turnOn(pvtesp, MMPvtesp_turnOn);
     MMPolyVoice_set_turnOff(pvtesp, MMPvtesp_turnOff);

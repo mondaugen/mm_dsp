@@ -1,6 +1,7 @@
 #ifndef MM_TRAPENVEDSAMPLEPLAYER_H
 #define MM_TRAPENVEDSAMPLEPLAYER_H 
 
+#include "mm_wavtab.h" 
 #include "mm_envedsampleplayer.h"
 #include "mm_trapezoid_env.h" 
 
@@ -22,7 +23,7 @@ void MMTrapEnvedSamplePlayer_noteOn(
         MMSample        index,
         MMSample        attackTime,
         MMSample        releaseTime,
-        WavTav          *samples);
+        MMWavTab          *samples);
 
 #define MMTrapEnvedSamplePlayer_getTrapezoidEnv(tesp) ((MMTrapEnvedSamplePlayer*)(tesp))->te
 
