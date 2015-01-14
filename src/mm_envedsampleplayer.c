@@ -36,7 +36,7 @@ void MMEnvedSamplePlayer_init(MMEnvedSamplePlayer *esp, MMEnvelope *env, MMBus *
     /* Init sample player */
     MMSamplePlayer_init(&esp->sp);
     esp->sp.outBus = esp->internalBus; 
-    /* Add placeholder to top of internal sig chain */
+    /* Add sample player placeholder to top of internal sig chain */
     MMSigProc_insertAfter(&esp->sigChain.sigProcs, &esp->sp.placeHolder);
     /* zero signal at top of internal bus */
     MMSigConst_init(&esp->sigConst, esp->internalBus, 0, MMSigConst_doSum_FALSE);
@@ -51,4 +51,5 @@ void MMEnvedSamplePlayer_init(MMEnvedSamplePlayer *esp, MMEnvelope *env, MMBus *
     MMSigProc_setTick(esp, MMEnvedSamplePlayer_tick);
     /* Set default on done action */
     esp->onDone = NULL;
+    esp->onDoneParams = NULL;
 }

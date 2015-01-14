@@ -32,7 +32,9 @@ void MMEnvedSamplePlayer_init(MMEnvedSamplePlayer *esp, MMEnvelope *env, MMBus *
 #define MMEnvedSamplePlayer_getSamplePlayerSigProc(esp) ((MMEnvedSamplePlayer*)(esp))->spsp
 #define MMEnvedSamplePlayer_getEnveloper(esp) ((MMEnvedSamplePlayer*)(esp))->enver 
 #define MMEnvedSamplePlayer_doOnDone(esp) \
-    esp ? ((MMEnvedSamplePlayer*)esp)->onDone((MMEnvedSamplePlayer*)esp, \
-            ((MMEnvedSamplePlayer*)esp)->onDoneParams) : esp
+    ((MMEnvedSamplePlayer*)esp)->onDone ? \
+        ((MMEnvedSamplePlayer*)esp)->onDone((MMEnvedSamplePlayer*)esp, \
+            ((MMEnvedSamplePlayer*)esp)->onDoneParams) : \
+        ((MMEnvedSamplePlayer*)esp)->onDone
 
 #endif /* MM_ENVEDSAMPLEPLAYER_H */
