@@ -29,9 +29,12 @@ struct __MMPvtespParams {
     MMSample        index;
     MMSample        attackTime;
     MMSample        releaseTime;
-    MMWavTab          *samples;
+    MMWavTab        *samples;
+    MMBool          loop;
 };
 
 MMPvtesp *MMPvtesp_new(MMTrapEnvedSamplePlayer *tesp);
+
+MMPvtespParams *MMPvtespParams_new();
 
 #endif /* MMPV_TESP_H */

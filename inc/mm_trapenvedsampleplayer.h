@@ -23,7 +23,8 @@ void MMTrapEnvedSamplePlayer_noteOn(
         MMSample        index,
         MMSample        attackTime,
         MMSample        releaseTime,
-        MMWavTab          *samples);
+        MMWavTab        *samples,
+        MMBool          loop);
 
 #define MMTrapEnvedSamplePlayer_getTrapezoidEnv(tesp) ((MMTrapEnvedSamplePlayer*)(tesp))->te
 

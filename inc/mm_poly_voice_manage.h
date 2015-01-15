@@ -1,6 +1,7 @@
 #ifndef MM_POLY_VOICE_MANAGE_H
 #define MM_POLY_VOICE_MANAGE_H 
 
+#include <stdlib.h> 
 #include "mm_dllist.h"
 
 /* Handle allocation of polyphonic notes. */
@@ -25,7 +26,8 @@ struct __MMPolyVoice {
      * greater than. If no ordering, should return 1 */
     int (*compare)(MMPolyVoice *pv, void *params);
     /* Attaches the turn off function so it can be called when whatever voice
-     * has actually finished. */
+     * has actually finished. This function should free params when it has
+     * finished with them. */
     void (*attachOnTurnOff)(MMPolyVoice *pv, void *params);
     MMPolyVoiceUsed used;
 };

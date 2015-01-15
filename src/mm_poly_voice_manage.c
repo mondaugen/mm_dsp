@@ -10,6 +10,11 @@ struct __MMPolyManager {
     size_t numPlayingVoices;
 };
 
+/* Turn a note on using params. If steal is set, then will steal the oldest
+ * voice. params must have been alloced with malloc() and can be freed with
+ * free(). when stealing is off, params are freed immediately after being used
+ * to turn the voice on. when stealing is on, the "doOnDone" method of the
+ * MMPolyVoice (it should have one!) should free the params. */
 void MMPolyManager_noteOn(MMPolyManager *pm, void *params, MMPolyManagerSteal steal)
 {
     /* Check if note is already playing */
@@ -18,6 +23,7 @@ void MMPolyManager_noteOn(MMPolyManager *pm, void *params, MMPolyManagerSteal st
     while (pv) {
         if (MMPolyVoice_compare(pv,params) == 0) {
             MMPolyVoice_turnOn(pv,params);
+            free(params); /* free params because they will not be used again */
             return;
         }
         pv = (MMPolyVoice*)MMDLList_getNext(pv);
@@ -27,6 +33,7 @@ void MMPolyManager_noteOn(MMPolyManager *pm, void *params, MMPolyManagerSteal st
     for (i = 0; i < pm->numVoices; i++) {
         if (pm->voices[i]->used == MMPolyVoiceUsed_FALSE) {
             MMPolyVoice_turnOn(pm->voices[i],params);
+            free(params); /* free params because they will not be used again */
             MMDLList_insertAfter((MMDLList*)&pm->playingVoices,(MMDLList*)pm->voices[i]);
             return;
         }
@@ -38,6 +45,8 @@ void MMPolyManager_noteOn(MMPolyManager *pm, void *params, MMPolyManagerSteal st
          * has finished */
         MMPolyVoice_attachOnTurnOff(pv,params);
         MMPolyVoice_turnOff(pv,params);
+        /* don't free the params !! whatever happens when the note eventually
+         * turns off still needs the params! */
     }
 }
 

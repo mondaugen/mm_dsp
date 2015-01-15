@@ -18,7 +18,7 @@ static void MMPvtesp_turnOn(MMPolyVoice *pv, void *params)
     /* Formally, the paramType should only be of type NOTEON but we're loose
      * about it and don't check */
     MMTrapEnvedSamplePlayer_noteOn(tesp, np->interpolation, np->index, np->note,
-            np->amplitude, np->attackTime, np->releaseTime, np->samples);
+            np->amplitude, np->attackTime, np->releaseTime, np->samples, np->loop);
 }
 
 static void MMPvtesp_turnOff(MMPolyVoice *pv, void *params)
@@ -39,7 +39,9 @@ static void MMPvtesp_onDone(MMEnvedSamplePlayer *esp, void *params)
     MMTrapEnvedSamplePlayer *tesp = (MMTrapEnvedSamplePlayer*)esp;
     MMPvtespParams *np = (MMPvtespParams*)params;
     MMTrapEnvedSamplePlayer_noteOn(tesp, np->interpolation, np->index, np->note,
-            np->amplitude, np->attackTime, np->releaseTime, np->samples);
+            np->amplitude, np->attackTime, np->releaseTime, np->samples, np->loop);
+    /* Free the params */
+    free(esp->onDoneParams);
     esp->onDone = NULL;
     esp->onDoneParams = NULL;
 }
@@ -83,5 +85,20 @@ MMPvtesp *MMPvtesp_new(MMTrapEnvedSamplePlayer *tesp)
     if (result) {
         MMPvtesp_init(result,tesp);
     }
+    return result;
+}
+
+MMPvtespParams *MMPvtespParams_new()
+{
+    MMPvtespParams *result = (MMPvtespParams*)malloc(sizeof(MMPvtespParams));
+    result->paramType       = MMPvtespParamType_NOTEOFF;
+    result->note            = 0;
+    result->amplitude       = 0;
+    result->interpolation   = MMInterpMethod_NONE;
+    result->index           = 0;
+    result->attackTime      = 0;
+    result->releaseTime     = 0;
+    result->samples         = NULL;
+    result->loop            = 0;
     return result;
 }
