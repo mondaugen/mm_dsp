@@ -22,7 +22,7 @@ struct __MMEnvedSamplePlayer {
     MMEnveloper enver;
     MMBusMerger bm;
     MMBus *internalBus;
-    void (*onDone)(MMEnvedSamplePlayer*, void*);
+    void (*onDone)(MMEnvedSamplePlayer*);
     void *onDoneParams;
 };
 
@@ -33,8 +33,7 @@ void MMEnvedSamplePlayer_init(MMEnvedSamplePlayer *esp, MMEnvelope *env, MMBus *
 #define MMEnvedSamplePlayer_getEnveloper(esp) ((MMEnvedSamplePlayer*)(esp))->enver 
 #define MMEnvedSamplePlayer_doOnDone(esp) \
     ((MMEnvedSamplePlayer*)esp)->onDone ? \
-        ((MMEnvedSamplePlayer*)esp)->onDone((MMEnvedSamplePlayer*)esp, \
-            ((MMEnvedSamplePlayer*)esp)->onDoneParams) : \
+        ((MMEnvedSamplePlayer*)esp)->onDone((MMEnvedSamplePlayer*)esp) : \
         ((MMEnvedSamplePlayer*)esp)->onDone
 
 #endif /* MM_ENVEDSAMPLEPLAYER_H */

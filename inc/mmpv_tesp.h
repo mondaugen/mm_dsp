@@ -4,6 +4,7 @@
 #include "mm_sample.h" 
 #include "mm_wavtab.h" 
 #include "mm_trapenvedsampleplayer.h" 
+#include "mm_poly_voice_manage.h" 
 
 typedef struct __MMPvtesp MMPvtesp;
 
@@ -22,15 +23,16 @@ typedef enum {
  * time (seconds, can be changed later before the note off, so it is not
  * critical here), samples (pointer to WavTav) */
 struct __MMPvtespParams {
-    MMPvtespParamType paramType;
-    MMSample        note;
-    MMSample        amplitude;
-    MMInterpMethod  interpolation;
-    MMSample        index;
-    MMSample        attackTime;
-    MMSample        releaseTime;
-    MMWavTab        *samples;
-    MMBool          loop;
+    MMPolyVoiceParams   head;
+    MMPvtespParamType   paramType;
+    MMSample            note;
+    MMSample            amplitude;
+    MMInterpMethod      interpolation;
+    MMSample            index;
+    MMSample            attackTime;
+    MMSample            releaseTime;
+    MMWavTab            *samples;
+    MMBool              loop;
 };
 
 MMPvtesp *MMPvtesp_new(MMTrapEnvedSamplePlayer *tesp);

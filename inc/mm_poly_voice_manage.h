@@ -16,20 +16,30 @@ typedef enum {
     MMPolyVoiceUsed_FALSE,
 } MMPolyVoiceUsed;
 
+/* The params that are passed to the function need to subclass this struct so
+ * that they can be passed a pointer to the PolyVoice that needs to be freed
+ * when their sig proc calls onDone */
+typedef struct __MMPolyVoiceParams MMPolyVoiceParams;
+
 typedef struct __MMPolyVoice MMPolyVoice;
 
 struct __MMPolyVoice {
     MMDLList head;
-    void (*turnOn)(MMPolyVoice *pv, void *params);
-    void (*turnOff)(MMPolyVoice *pv, void *params);
+    void (*turnOn)(MMPolyVoice *pv, MMPolyVoiceParams *params);
+    void (*turnOff)(MMPolyVoice *pv, MMPolyVoiceParams *params);
     /* should return negative when first less than second, 0 if equal, 1 if
      * greater than. If no ordering, should return 1 */
-    int (*compare)(MMPolyVoice *pv, void *params);
+    int (*compare)(MMPolyVoice *pv, MMPolyVoiceParams *params);
     /* Attaches the turn off function so it can be called when whatever voice
      * has actually finished. This function should free params when it has
-     * finished with them. */
-    void (*attachOnTurnOff)(MMPolyVoice *pv, void *params);
+     * finished with them. ALSO it should free any previous params that may have
+     * been attached and that haven't already been freed to avoid a memory leak! */
+    void (*attachOnTurnOff)(MMPolyVoice *pv, MMPolyVoiceParams *params);
     MMPolyVoiceUsed used;
+};
+
+struct __MMPolyVoiceParams {
+    MMPolyVoice *parent;
 };
 
 #define MMPolyVoice_set_used(pv,u)            ((MMPolyVoice*)pv)->used = u
@@ -42,12 +52,13 @@ struct __MMPolyVoice {
 #define MMPolyVoice_compare(pv,params)        ((MMPolyVoice*)pv)->compare((MMPolyVoice*)pv,params) 
 #define MMPolyVoice_attachOnTurnOff(pv,params) \
     ((MMPolyVoice*)pv)->attachOnTurnOff((MMPolyVoice*)pv,params) 
+#define MMPolyVoice_init(pv) MMDLList_init(pv) /* Just initializes list head */
 
 typedef struct __MMPolyManager MMPolyManager;
 
-void MMPolyManager_noteOn(MMPolyManager *pm, void *params, MMPolyManagerSteal steal);
+void MMPolyManager_noteOn(MMPolyManager *pm, MMPolyVoiceParams *params, MMPolyManagerSteal steal);
 
-void MMPolyManager_noteOff(MMPolyManager *pm, void *params);
+void MMPolyManager_noteOff(MMPolyManager *pm, MMPolyVoiceParams *params);
 
 MMPolyManager *MMPolyManager_new(size_t numVoices);
 

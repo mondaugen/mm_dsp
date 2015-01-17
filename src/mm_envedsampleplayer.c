@@ -52,4 +52,11 @@ void MMEnvedSamplePlayer_init(MMEnvedSamplePlayer *esp, MMEnvelope *env, MMBus *
     /* Set default on done action */
     esp->onDone = NULL;
     esp->onDoneParams = NULL;
+    /* set initial state */
+    MMSigProc_setState(
+            &MMEnvedSamplePlayer_getSamplePlayerSigProc(esp),
+            MMSigProc_State_DONE);
+    MMSigProc_setDoneAction(
+            &MMEnvedSamplePlayer_getSamplePlayerSigProc(esp),
+            MMSigProc_DoneAction_NONE);
 }

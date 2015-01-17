@@ -20,6 +20,7 @@ MMSigProc_Err MMSigProc_defaultTick(MMSigProc *sp)
 void MMSigProc_init(MMSigProc *sp)
 {
     memset(sp,0,sizeof(MMSigProc));
+    MMDLList_init(sp);
     sp->tick = MMSigProc_defaultTick;
     sp->state = MMSigProc_State_UNKNOWN;
     sp->doneAction = MMSigProc_DoneAction_NONE;

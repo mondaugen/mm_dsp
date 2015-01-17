@@ -2,26 +2,32 @@
 /* This is sort of a proof-of-concept and will probably become obsolete when the
  * MMEnvedSamplePlayer is generalized for arbitrary envelopes */
 #include "mmpv_tesp.h" 
-#include "mm_poly_voice_manage.h" 
 
 struct __MMPvtesp {
     MMPolyVoice head;
     MMTrapEnvedSamplePlayer *tesp;
 };
 
-
-
-static void MMPvtesp_turnOn(MMPolyVoice *pv, void *params)
+static void MMPvtesp_turnOn(MMPolyVoice *pv, MMPolyVoiceParams *params)
 {
     MMTrapEnvedSamplePlayer *tesp = ((MMPvtesp*)pv)->tesp;
     MMPvtespParams *np = (MMPvtespParams*)params;
     /* Formally, the paramType should only be of type NOTEON but we're loose
      * about it and don't check */
-    MMTrapEnvedSamplePlayer_noteOn(tesp, np->interpolation, np->index, np->note,
-            np->amplitude, np->attackTime, np->releaseTime, np->samples, np->loop);
+    MMTrapEnvedSamplePlayer_noteOn(
+        tesp,
+        np->note,
+        np->amplitude,
+        np->interpolation,
+        np->index,
+        np->attackTime,
+        np->releaseTime,
+        np->samples,
+        np->loop);
+    params->parent->used = MMPolyVoiceUsed_TRUE;
 }
 
-static void MMPvtesp_turnOff(MMPolyVoice *pv, void *params)
+static void MMPvtesp_turnOff(MMPolyVoice *pv, MMPolyVoiceParams *params)
 {
     MMTrapEnvedSamplePlayer *tesp = ((MMPvtesp*)pv)->tesp;
     MMPvtespParams *np = (MMPvtespParams*)params;
@@ -34,32 +40,55 @@ static void MMPvtesp_turnOff(MMPolyVoice *pv, void *params)
 }
 
 /* A way to trigger another note following this note's release */
-static void MMPvtesp_onDone(MMEnvedSamplePlayer *esp, void *params)
+static void MMPvtesp_onDone(MMEnvedSamplePlayer *esp)
 {
     MMTrapEnvedSamplePlayer *tesp = (MMTrapEnvedSamplePlayer*)esp;
-    MMPvtespParams *np = (MMPvtespParams*)params;
-    MMTrapEnvedSamplePlayer_noteOn(tesp, np->interpolation, np->index, np->note,
-            np->amplitude, np->attackTime, np->releaseTime, np->samples, np->loop);
+    MMPvtespParams *np = (MMPvtespParams*)esp->onDoneParams;
+    /* If params is from a NOTEON, that means the note was stolen, told to end,
+     * ended, and now needs to be retriggered */
+    if (np->paramType == MMPvtespParamType_NOTEON) {
+    MMTrapEnvedSamplePlayer_noteOn(
+        tesp,
+        np->note,
+        np->amplitude,
+        np->interpolation,
+        np->index,
+        np->attackTime,
+        np->releaseTime,
+        np->samples,
+        np->loop);
+//        MMTrapEnvedSamplePlayer_noteOn(tesp, np->interpolation, np->index, np->note,
+//                np->amplitude, np->attackTime, np->releaseTime, np->samples, np->loop);
+    } else {
+        /* Mark note as NOT being played */
+        ((MMPolyVoiceParams*)np)->parent->used = MMPolyVoiceUsed_FALSE;
+        /* Remove from list of notes playing */
+        MMDLList_remove((MMDLList*)((MMPolyVoiceParams*)np)->parent);
+    }
     /* Free the params */
     free(esp->onDoneParams);
     esp->onDone = NULL;
     esp->onDoneParams = NULL;
 }
 
-static void MMPvtesp_attachOnTurnOff(MMPolyVoice *pv, void *params)
+static void MMPvtesp_attachOnTurnOff(MMPolyVoice *pv, MMPolyVoiceParams *params)
 {
     MMEnvedSamplePlayer *esp = (MMEnvedSamplePlayer*)((MMPvtesp*)pv)->tesp;
-    MMPvtespParams *np = (MMPvtespParams*)params;
+//    MMPvtespParams *np = (MMPvtespParams*)params;
     /* If called with NOTEON parameters, this means we want to trigger a note
      * after the current note has been turned off because it has been stolen */
-    if (np->paramType == MMPvtespParamType_NOTEON) {
-        esp->onDone = MMPvtesp_onDone;
-        np->paramType = MMPvtespParamType_ONDONE;
-        esp->onDoneParams = params;
+    /* if esp->onDoneParams not NULL it means this note is already waiting
+     * to be done, which will now never happen for this set of params
+     * because they are now going to be replaced, so free the params that
+     * are there */
+    if (esp->onDoneParams) {
+        free(esp->onDoneParams);
     }
+    esp->onDone = MMPvtesp_onDone;
+    esp->onDoneParams = params;
 }
 
-static int MMPvtesp_compare(MMPolyVoice *pv, void *params)
+static int MMPvtesp_compare(MMPolyVoice *pv, MMPolyVoiceParams *params)
 {
     MMTrapEnvedSamplePlayer *tesp = ((MMPvtesp*)pv)->tesp;
     MMPvtespParams *np = (MMPvtespParams*)params;
@@ -71,6 +100,7 @@ static int MMPvtesp_compare(MMPolyVoice *pv, void *params)
 
 static void MMPvtesp_init(MMPvtesp *pvtesp, MMTrapEnvedSamplePlayer *tesp)
 {
+    MMPolyVoice_init(pvtesp);
     MMPolyVoice_set_turnOn(pvtesp, MMPvtesp_turnOn);
     MMPolyVoice_set_turnOff(pvtesp, MMPvtesp_turnOff);
     MMPolyVoice_set_compare(pvtesp, MMPvtesp_compare);
