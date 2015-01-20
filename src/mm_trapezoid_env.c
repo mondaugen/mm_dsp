@@ -19,7 +19,7 @@ static MMSample MMTrapezoidEnv_getCurValue(MMEnvelope *te)
 static void MMTrapezoidEnv_incTime(MMEnvelope *te, MMSample deltaTime)
 {
     if ((MMEnvelope_getState(te) == MMEnvelopeState_OFF)
-            || (MMEnvelope_getState(te) == MMTrapezoidEnvState_SUSTAIN)) {
+            || (MMEnvelope_getState(te) == MMTrapezoidEnvState_SUSTAIN)){
         return;
     }
     MMEnvelope_get_time(te) += deltaTime;

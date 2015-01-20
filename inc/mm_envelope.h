@@ -5,6 +5,7 @@
 
 typedef enum {
     MMEnvelopeState_OFF,
+    MMEnvelopeState_DONE,
     /* more values can be added but must end with the last value */
     MMEnvelopeState_DUMMY /* inheriting classes should start their own 
                              state enums with this state */
@@ -22,9 +23,7 @@ struct __MMEnvelope {
     void     (*reset)(MMEnvelope *);             /* Reset envelope */
 };
 
-#define MMEnvelope_init(e)  /* do nothing for now, but in the future, something
-                               could happen so inheriting classes should call
-                               this in their init functions */ 
+#define MMEnvelope_init(e) ((MMEnvelope*)e)->state = MMEnvelopeState_OFF
 
 /* casts subclasses to MMEnvelope */
 #define MMEnvelope_get(e)                   ((MMEnvelope*)e)  
