@@ -41,8 +41,9 @@ MMSigProc_Err MMSamplePlayerSigProc_tick(MMSigProc *sp)
         }
         spsp->index += spsp->rate;
         if (spsp->loop) {
-            spsp->index = MM_fwrap(spsp->index, 0, spsp->samples->length);
-        } else if ((spsp->index >= spsp->samples->length)
+            spsp->index = MM_fwrap(spsp->index, 0,
+                    MMArray_get_length(spsp->samples));
+        } else if ((spsp->index >= MMArray_get_length(spsp->samples))
                 || (spsp->index < 0)) {
             MMSigProc_setState(spsp,MMSigProc_State_DONE);
             i = (spsp->parent->outBus->size * spsp->parent->outBus->channels);
