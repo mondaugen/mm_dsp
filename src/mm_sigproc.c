@@ -7,21 +7,11 @@ void MMSigProc_free(void *sp)
     free(sp);
 }
 
-MMSigProc_Err MMSigProc_defaultTick(MMSigProc *sp)
-{
-    if (sp->state == MMSigProc_State_WAIT_FREE) {
-        sp = (MMSigProc*)MMSigProc_remove(sp);
-        MMSigProc_free(sp);
-        return MMSigProc_Err_JUST_FREED;
-    }
-    return MMSigProc_Err_GOOD;
-}
-
 void MMSigProc_init(MMSigProc *sp)
 {
     memset(sp,0,sizeof(MMSigProc));
     MMDLList_init(sp);
-    sp->tick = MMSigProc_defaultTick;
+    sp->tick = NULL;
     sp->state = MMSigProc_State_UNKNOWN;
     sp->doneAction = MMSigProc_DoneAction_NONE;
 }

@@ -32,7 +32,7 @@ typedef enum
     MMSigProc_DoneAction_FREE
 } MMSigProc_DoneAction;
 
-typedef MMSigProc_Err (*MMSigProc_TickFunc)(MMSigProc *);
+typedef void (*MMSigProc_TickFunc)(MMSigProc *);
 typedef MMSigProc_Err (*MMSigProc_HandleStateFunc)(MMSigProc *);
 typedef void          (*MMSigProc_FreeFunc)(MMSigProc *);
 
@@ -58,10 +58,10 @@ struct __MMSigProc {
 #define MMSigProc_addAfterTail(whom,who)    MMDLList_addAfterTail((MMDLList*)whom,(MMDLList*)who)
 #define MMSigProc_addBeforeHead(whom,who)   MMDLList_addBeforeHead((MMDLList*)whom,(MMDLList*)who)
 #define MMSigProc_remove(who)               MMDLList_remove((MMDLList*)who)
+#define MMSigProc_defaultTick(sp)           sp /* Do nothing for now */
 
 void MMSigProc_init(MMSigProc *sp);
 MMSigProc *MMSigProc_new(void);
-MMSigProc_Err MMSigProc_defaultTick(MMSigProc *sp);
 
 /* #define MMSigProc_handleState(sp) ((MMSigProc*)sp)->handleState((MMSigProc*)sp); */
 

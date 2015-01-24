@@ -1,10 +1,7 @@
 #include "mm_sigconst.h"
 
-MMSigProc_Err MMSigConst_tick(MMSigProc *sp)
+static void MMSigConst_tick(MMSigProc *sp)
 {
-    if (!MMSigConst_getOutBus(sp)) {
-        return MMSigProc_Err_NOTINIT; 
-    }
     size_t i, j;
     for (i = 0; 
          i < (MMSigConst_getOutBus(sp)->size * MMSigConst_getOutBus(sp)->channels);
@@ -17,7 +14,6 @@ MMSigProc_Err MMSigConst_tick(MMSigProc *sp)
             }
         }
     }
-    return MMSigProc_Err_GOOD;
 }
         
 /* Initializes tick function, bus to NULL, constant to 0 and doSum to 0 */

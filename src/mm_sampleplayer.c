@@ -4,15 +4,12 @@
 
 /* Writes a sample according to lookup speed and wavetable into the busses of
  * the sample player. No interpolation for now. */
-MMSigProc_Err MMSamplePlayerSigProc_tick(MMSigProc *sp)
+Mstatic void MMSamplePlayerSigProc_tick(MMSigProc *sp)
 {
     /* Call superclass tick method */
-    MMSigProc_Err result;
-    if ((result = MMSigProc_defaultTick(sp)) != MMSigProc_Err_GOOD) {
-        return result;
-    }
+    MMSigProc_defaultTick(sp);
     if (MMSigProc_getState(sp) == MMSigProc_State_DONE) {
-        return MMSigProc_Err_IDLE;
+        return;
     }
     MMSamplePlayerSigProc *spsp = (MMSamplePlayerSigProc*)sp;
     size_t i;
@@ -54,7 +51,6 @@ MMSigProc_Err MMSamplePlayerSigProc_tick(MMSigProc *sp)
             && (MMSigProc_getDoneAction(spsp) == MMSigProc_DoneAction_FREE)) {
         sp->state = MMSigProc_State_WAIT_FREE;
     }
-    return MMSigProc_Err_GOOD;
 }
 
 

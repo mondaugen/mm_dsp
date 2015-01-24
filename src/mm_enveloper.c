@@ -1,12 +1,8 @@
 #include "mm_enveloper.h" 
 
-static MMSigProc_Err MMEnveloper_tick(MMSigProc *enver)
+static void MMEnveloper_tick(MMSigProc *enver)
 {
-    /* Call superclass tick method */
-    MMSigProc_Err result;
-    if ((result = MMSigProc_defaultTick(enver)) != MMSigProc_Err_GOOD) {
-        return result;
-    }
+    MSigProc_defaultTick(enver);
     /* envelopes all channels */
     size_t i, j;
     for (   i = 0; 
@@ -18,7 +14,6 @@ static MMSigProc_Err MMEnveloper_tick(MMSigProc *enver)
         }
         MMEnvelope_incTime(MMEnveloper_get(enver)->env,MMEnveloper_get(enver)->tickPeriod);
     }
-    return result;
 }
 
 void MMEnveloper_init(MMEnveloper *enver, MMEnvelope *env, MMBus *outBus, MMSample tickPeriod)

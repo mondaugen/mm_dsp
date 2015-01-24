@@ -4,18 +4,13 @@ static void MMEnvedSamplePlayer_onDone_default(MMEnvedSamplePlayer *esp) {
     return;
 }
 
-static MMSigProc_Err MMEnvedSamplePlayer_tick(MMSigProc *esp)
+static void MMEnvedSamplePlayer_tick(MMSigProc *esp)
 {
-    /* Call superclass tick method */
-    MMSigProc_Err result;
-    if ((result = MMSigProc_defaultTick(esp)) != MMSigProc_Err_GOOD) {
-        return result;
-    }
+    MMSigProc_defaultTick(esp);
     MMSigProc_tick(&((MMEnvedSamplePlayer*)esp)->sigChain);
     if (MMEnvedSamplePlayer_getEnveloper(esp).env->state == MMEnvelopeState_OFF) {
         MMEnvedSamplePlayer_doOnDone(esp);
     }
-    return result;
 }
 
 void MMEnvedSamplePlayer_init(MMEnvedSamplePlayer *esp, MMEnvelope *env, MMBus *outBus,
