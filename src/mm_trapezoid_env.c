@@ -54,8 +54,8 @@ static void MMTrapezoidEnv_startRelease(MMEnvelope *te)
     MMEnvelope_get_time(te) = 0;
 }
 
-/* TODO: Must releaseTime be known upon init or can an arbitrary value be
- * supplied and updated before startRelease is called? */
+/* releaseTime must be known upon init so that the envelope knows how long to
+ * fade out for if stolen */
 void MMTrapezoidEnv_init(MMTrapezoidEnv *te,
                          MMSample min,
                          MMSample max,
