@@ -2,7 +2,7 @@
 
 static void MMEnveloper_tick(MMSigProc *enver)
 {
-    MSigProc_defaultTick(enver);
+    MMSigProc_defaultTick(enver);
     /* envelopes all channels */
     size_t i, j;
     for (   i = 0; 

@@ -4,7 +4,7 @@
 
 /* Writes a sample according to lookup speed and wavetable into the busses of
  * the sample player. No interpolation for now. */
-Mstatic void MMSamplePlayerSigProc_tick(MMSigProc *sp)
+static void MMSamplePlayerSigProc_tick(MMSigProc *sp)
 {
     /* Call superclass tick method */
     MMSigProc_defaultTick(sp);

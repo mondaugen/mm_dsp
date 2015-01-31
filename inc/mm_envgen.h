@@ -11,7 +11,7 @@ struct __MMEnvGen {
     MMSigProc     head;
     MMBus         *outBus;
     MMSample      deltaTime;
-}
+};
 
 /* casts subclasses to MMEnvGen */
 #define MMEnvGen_get(e)                   ((MMEnvGen*)e)  

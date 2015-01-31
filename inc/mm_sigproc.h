@@ -46,9 +46,9 @@ struct __MMSigProc {
 
 /* A macro for simplifying the syntax needed to call the tick method of a
  * MMSigProc* or pointers to any instances of its subclasses. */
-#define MMSigProc_tick(sp) ((MMSigProc*)sp)->tick((MMSigProc*)sp);
+#define MMSigProc_tick(sp)                  ((MMSigProc*)sp)->tick((MMSigProc*)sp)
 
-#define MMSigProc_setTick(sp,func)          ((MMSigProc*)sp)->tick = func; 
+#define MMSigProc_setTick(sp,func)          ((MMSigProc*)sp)->tick = func 
 #define MMSigProc_getState(sp)              ((MMSigProc*)sp)->state
 #define MMSigProc_setState(sp,val)          MMSigProc_getState(sp) = val
 #define MMSigProc_getDoneAction(sp)         ((MMSigProc*)sp)->doneAction
@@ -58,8 +58,9 @@ struct __MMSigProc {
 #define MMSigProc_addAfterTail(whom,who)    MMDLList_addAfterTail((MMDLList*)whom,(MMDLList*)who)
 #define MMSigProc_addBeforeHead(whom,who)   MMDLList_addBeforeHead((MMDLList*)whom,(MMDLList*)who)
 #define MMSigProc_remove(who)               MMDLList_remove((MMDLList*)who)
-#define MMSigProc_defaultTick(sp)           sp /* Do nothing for now */
 
+
+void MMSigProc_defaultTick(MMSigProc *sp);
 void MMSigProc_init(MMSigProc *sp);
 MMSigProc *MMSigProc_new(void);
 

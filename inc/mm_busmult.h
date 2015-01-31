@@ -15,6 +15,6 @@ struct __MMBusMult {
     MMBus *otherBus;  /* The other argument in the multiplication */
 };
 
-void MMBusMult_init(MMBusMult *bm, MMBus *resultBus, MMBus *otherBus);
+void MMBusMult_init(MMBusMult *bm, MMBus *rb, MMBus *ob);
 
 #endif /* MM_BUSMULT_H */

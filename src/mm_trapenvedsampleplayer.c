@@ -5,9 +5,9 @@ void MMTrapEnvedSamplePlayer_init(MMTrapEnvedSamplePlayer *tesp, MMBus *outBus,
         size_t internalBusSize, MMSample tickPeriod)
 {
     MMEnvedSamplePlayer_init((MMEnvedSamplePlayer*)tesp, (MMEnvelope*)&tesp->teg.te,
-            outBus, internalBusSize, tickPeriod);
-    /* Trapezoid envelope needs to be initialized, but its parameters
-     * time can later be changed, we just put some arbitrary ones for now */
+            outBus, internalBusSize);
+    /* Trapezoid envelope needs to be initialized, but its parameters can later
+     * be changed, we just put some arbitrary ones for now */
     MMTrapEnvGen_init(&tesp->teg, ((MMEnvedSamplePlayer*)tesp)->envBus,
                         tickPeriod, 0, 1, 1, 1);
     MMEnvedSamplePlayer_insertEnvGen(tesp,&tesp->teg);
@@ -33,6 +33,6 @@ void MMTrapEnvedSamplePlayer_noteOn(
     MMSigProc_setState(&MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp),
                         MMSigProc_State_PLAYING);
     MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).samples = samples;
-    MMTrapezoidEnv_setEnvParams(0, amplitude, attackTime, releaseTime);
+    MMTrapezoidEnv_setEnvParams(&tesp->teg.te,0, amplitude, attackTime, releaseTime);
     MMEnvelope_startAttack(&MMTrapEnvedSamplePlayer_getTrapezoidEnv(tesp));
 }

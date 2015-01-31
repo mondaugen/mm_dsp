@@ -1,6 +1,7 @@
 #ifndef MM_TRAPENVGEN_H
 #define MM_TRAPENVGEN_H 
 
+#include "mm_sample.h" 
 #include "mm_envgen.h"
 #include "mm_trapezoid_env.h" 
 
@@ -12,7 +13,7 @@ struct __MMTrapEnvGen {
 };
 
 void MMTrapEnvGen_init(  MMTrapEnvGen *teg,
-                         MMBus    bus,
+                         MMBus    *bus,
                          MMSample deltaTime,
                          MMSample min,
                          MMSample max,

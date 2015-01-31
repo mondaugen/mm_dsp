@@ -12,3 +12,11 @@ static void MMBusMult_tick(MMSigProc *bm)
         }
     }
 }
+
+void MMBusMult_init(MMBusMult *bm, MMBus *rb, MMBus *ob)
+{
+    MMSigProc_init((MMSigProc*)bm);
+    MMSigProc_setTick(bm,MMBusMult_tick);
+    (bm)->resultBus = rb;
+    (bm)->otherBus  = ob;
+}

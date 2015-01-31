@@ -10,6 +10,7 @@
 #include "mm_bus.h" 
 #include "mm_sigconst.h" 
 #include "mm_busmerger.h" 
+#include "mm_busmult.h"
 
 typedef struct __MMEnvedSamplePlayer MMEnvedSamplePlayer;
 
@@ -41,6 +42,6 @@ void MMEnvedSamplePlayer_init(MMEnvedSamplePlayer *esp, MMEnvelope *env, MMBus *
  * must tell envGen (the sigProc generating the enveloping signal) to write to
  * the internal envBus. */
 #define MMEnvedSamplePlayer_insertEnvGen(esp,eg) \
-    MMSigProc_insertBefore(((MMEnvedSamplePlayer*)esp)->busMult)
+    MMSigProc_insertBefore(&((MMEnvedSamplePlayer*)esp)->busMult,eg)
 
 #endif /* MM_ENVEDSAMPLEPLAYER_H */

@@ -24,7 +24,7 @@ void MMTrapezoidEnv_init(MMTrapezoidEnv *te,
                          MMSample attackTime,
                          MMSample releaseTime);
 
-#define MMTrapezoidEnv_setEnvParams(_min,_max,_attackTime,_releaseTime)\
+#define MMTrapezoidEnv_setEnvParams(te,_min,_max,_attackTime,_releaseTime)\
     MMTrapezoidEnv_get(te)->min = _min;\
     MMTrapezoidEnv_get(te)->max = _max;\
     MMTrapezoidEnv_get(te)->attackTime = _attackTime;\
@@ -40,7 +40,7 @@ void MMTrapezoidEnv_init(MMTrapezoidEnv *te,
 #define MMTrapezoidEnv_incTime_FAST(te,deltaTime) \
     do {\
         if ((MMEnvelope_getState(te) == MMEnvelopeState_OFF)\
-            || (MMEnvelope_getState(te) == MMEnvelopeState_SUSTAIN)) {\
+            || (MMEnvelope_getState(te) == MMTrapezoidEnvState_SUSTAIN)) {\
             break;\
         }\
         MMEnvelope_get_time(te) += deltaTime;\

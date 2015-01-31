@@ -4,6 +4,7 @@
 #include "mm_wavtab.h" 
 #include "mm_envedsampleplayer.h"
 #include "mm_trapezoid_env.h" 
+#include "mm_trapenvgen.h" 
 
 typedef struct __MMTrapEnvedSamplePlayer MMTrapEnvedSamplePlayer;
 
