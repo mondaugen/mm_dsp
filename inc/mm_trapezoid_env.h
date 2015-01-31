@@ -24,6 +24,12 @@ void MMTrapezoidEnv_init(MMTrapezoidEnv *te,
                          MMSample attackTime,
                          MMSample releaseTime);
 
+#define MMTrapezoidEnv_setEnvParams(_min,_max,_attackTime,_releaseTime)\
+    MMTrapezoidEnv_get(te)->min = _min;\
+    MMTrapezoidEnv_get(te)->max = _max;\
+    MMTrapezoidEnv_get(te)->attackTime = _attackTime;\
+    MMTrapezoidEnv_get(te)->releaseTime = _releaseTime;
+
 #define MMTrapezoidEnv_get(te) ((MMTrapezoidEnv *)te) 
 
 #define MMTrapezoidEnv_getCurValue_FAST(te) \

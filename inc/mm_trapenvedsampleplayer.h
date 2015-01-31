@@ -9,7 +9,7 @@ typedef struct __MMTrapEnvedSamplePlayer MMTrapEnvedSamplePlayer;
 
 struct __MMTrapEnvedSamplePlayer {
     MMEnvedSamplePlayer head;
-    MMTrapezoidEnv te;
+    MMTrapEnvGen        teg;
 };
 
 void MMTrapEnvedSamplePlayer_init(MMTrapEnvedSamplePlayer *tesp, MMBus *outBus,
@@ -26,6 +26,6 @@ void MMTrapEnvedSamplePlayer_noteOn(
         MMWavTab        *samples,
         MMBool          loop);
 
-#define MMTrapEnvedSamplePlayer_getTrapezoidEnv(tesp) ((MMTrapEnvedSamplePlayer*)(tesp))->te
+#define MMTrapEnvedSamplePlayer_getTrapezoidEnv(tesp) ((MMTrapEnvedSamplePlayer*)(tesp))->teg.te
 
 #endif /* MM_TRAPENVEDSAMPLEPLAYER_H */

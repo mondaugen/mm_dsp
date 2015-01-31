@@ -69,9 +69,6 @@ void MMTrapezoidEnv_init(MMTrapezoidEnv *te,
     MMEnvelope_set_startRelease(te,MMTrapezoidEnv_startRelease);
     MMEnvelope_set_reset(te,MMTrapezoidEnv_reset);
     MMLineFunc2D_init(&MMTrapezoidEnv_get(te)->lf);
-    MMTrapezoidEnv_get(te)->min = min;
-    MMTrapezoidEnv_get(te)->max = max;
-    MMTrapezoidEnv_get(te)->attackTime = attackTime;
-    MMTrapezoidEnv_get(te)->releaseTime = releaseTime;
+    MMTrapezoidEnv_setEnvParams(min,max,attackTime,releaseTime);
     MMEnvelope_reset(te);
 }

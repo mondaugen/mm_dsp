@@ -14,25 +14,33 @@
 typedef struct __MMEnvedSamplePlayer MMEnvedSamplePlayer;
 
 struct __MMEnvedSamplePlayer {
-    MMSigProc head;
-    MMSigChain sigChain;
-    MMSigConst sigConst;
-    MMSamplePlayer sp;
-    MMSamplePlayerSigProc spsp;
-    MMEnveloper enver;
-    MMBusMerger bm;
-    MMBus *internalBus;
-    void (*onDone)(MMEnvedSamplePlayer*);
-    void *onDoneParams;
+    MMSigProc               head;
+    MMSigChain              sigChain;
+    MMSigConst              sigConst;
+    MMSamplePlayer          sp;
+    MMSamplePlayerSigProc   spsp;
+    MMEnvelope              *envelope;
+    MMBusMerger             bm;
+    MMBusMult               busMult;
+    MMBus                   *internalBus;
+    MMBus                   *envBus;
+    void                    (*onDone)(MMEnvedSamplePlayer*);
+    void                    *onDoneParams;
 };
 
 void MMEnvedSamplePlayer_init(MMEnvedSamplePlayer *esp, MMEnvelope *env, MMBus *outBus,
-        size_t internalBusSize, MMSample tickPeriod);
+        size_t internalBusSize);
 
 #define MMEnvedSamplePlayer_getSamplePlayerSigProc(esp) ((MMEnvedSamplePlayer*)(esp))->spsp
-#define MMEnvedSamplePlayer_getEnveloper(esp) ((MMEnvedSamplePlayer*)(esp))->enver 
+#define MMEnvedSamplePlayer_getEnvelope(esp) ((MMEnvedSamplePlayer*)(esp))->envelope
 #define MMEnvedSamplePlayer_doOnDone(esp) \
     ((MMEnvedSamplePlayer*)esp)->onDone ? \
         ((MMEnvedSamplePlayer*)esp)->onDone((MMEnvedSamplePlayer*)esp) : 0
+/* Add the sigProc generating the enveloping signal, to be called by subclasses.
+ * Adds the sigProc to the proper position in the sigChain. Inheriting classes
+ * must tell envGen (the sigProc generating the enveloping signal) to write to
+ * the internal envBus. */
+#define MMEnvedSamplePlayer_insertEnvGen(esp,eg) \
+    MMSigProc_insertBefore(((MMEnvedSamplePlayer*)esp)->busMult)
 
 #endif /* MM_ENVEDSAMPLEPLAYER_H */

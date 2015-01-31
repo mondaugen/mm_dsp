@@ -1,6 +1,7 @@
 #include "mm_envedsampleplayer.h" 
 
-static void MMEnvedSamplePlayer_onDone_default(MMEnvedSamplePlayer *esp) {
+static void MMEnvedSamplePlayer_onDone_default(MMEnvedSamplePlayer *esp)
+{
     return;
 }
 
@@ -8,26 +9,36 @@ static void MMEnvedSamplePlayer_tick(MMSigProc *esp)
 {
     MMSigProc_defaultTick(esp);
     MMSigProc_tick(&((MMEnvedSamplePlayer*)esp)->sigChain);
-    if (MMEnvedSamplePlayer_getEnveloper(esp).env->state == MMEnvelopeState_OFF) {
+    if (MMEnvedSamplePlayer_getEnvelope(esp)->state == MMEnvelopeState_OFF) {
         MMEnvedSamplePlayer_doOnDone(esp);
     }
 }
 
+/* This initializes an MMEnvedSamplePlayer, and it will know about the envelope
+ * that is enveloping it, but it will not yet have a signal
+ * being input into the multiplyer that that does the enveloping (it will just
+ * multiply with garbage in the envBus). The MMEnvGen (or whatever) must be
+ * added to the envBus and the sigChain by inheriting classes.
+ */
 void MMEnvedSamplePlayer_init(MMEnvedSamplePlayer *esp, MMEnvelope *env, MMBus *outBus,
-        size_t internalBusSize, MMSample tickPeriod)
+        size_t internalBusSize)
 {
     MMSigProc_init((MMSigProc*)esp);
     MMSigChain_init(&esp->sigChain);
     /* internal bus is only 1 channel */
     esp->internalBus = MMBus_new(internalBusSize,1); 
+    /* envelope bus is only 1 channel */
+    esp->envBus = MMBus_new(internalBusSize,1); 
     /* Init bus merger */
     MMBusMerger_init(&esp->bm, esp->internalBus, outBus);
     /* Add bus merger to top of internal sig chain */
     MMSigProc_insertAfter(&esp->sigChain.sigProcs, &esp->bm);
-    /* Init enveloper */
-    MMEnveloper_init(&esp->enver, env, esp->internalBus, tickPeriod);
-    /* Add enveloper to top of internal sig chain */
-    MMSigProc_insertAfter(&esp->sigChain.sigProcs, &esp->enver);
+    /* Store envelope */
+    esp->envelope = env;
+    /* Init bus multiplyer */
+    MMBusMult_init(&esp->busMult, esp->internalBus, esp->envBus);
+    /* Add bus multiplyer to top of internal sig chain */
+    MMSigProc_insertAfter(&esp->sigChain.sigProcs, &esp->busMult);
     /* Init sample player */
     MMSamplePlayer_init(&esp->sp);
     esp->sp.outBus = esp->internalBus; 
