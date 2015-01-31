@@ -5,8 +5,10 @@ static void MMBusMerger_tick(MMSigProc *bm)
 {
     MMSigProc_defaultTick(bm);
     size_t i, j;
-    for (i = 0; i < ((MMBusMerger*)bm)->sourceBus->size;
-            i += ((MMBusMerger*)bm)->sourceBus->channels) {
+    for (i = 0;
+         i < ((MMBusMerger*)bm)->sourceBus->size
+            * ((MMBusMerger*)bm)->sourceBus->channels;
+         i += ((MMBusMerger*)bm)->sourceBus->channels) {
         for (j = 0; j < ((MMBusMerger*)bm)->sourceBus->channels; j++) {
             ((MMBusMerger*)bm)->destBus->data[i + j] 
                     += ((MMBusMerger*)bm)->sourceBus->data[i + j];

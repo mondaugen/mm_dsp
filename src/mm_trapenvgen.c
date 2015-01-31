@@ -5,7 +5,8 @@ void MMTrapEnvGen_tick(MMSigProc *teg)
 {
     size_t i;
     for (   i = 0;
-            i < MMEnvGen_getBus(teg)->size;
+            i < MMEnvGen_getBus(teg)->size
+                * MMEnvGen_getBus(teg)->channels;
             i += MMEnvGen_getBus(teg)->channels) {
         MMEnvGen_getBus(teg)->data[i] = 
             MMTrapezoidEnv_getCurValue_FAST(&((MMTrapEnvGen*)teg)->te);
