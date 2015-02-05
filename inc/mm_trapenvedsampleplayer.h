@@ -27,6 +27,18 @@ void MMTrapEnvedSamplePlayer_noteOn(
         MMWavTab        *samples,
         MMBool          loop);
 
+void MMTrapEnvedSamplePlayer_noteOn_Rate(
+        MMTrapEnvedSamplePlayer *tesp,
+        MMSample        note,
+        MMSample        amplitude,
+        MMInterpMethod  interpolation,
+        MMSample        index,
+        MMSample        attackTime,
+        MMSample        releaseTime,
+        MMWavTab        *samples,
+        MMBool          loop,
+        MMSample        rate)
+
 #define MMTrapEnvedSamplePlayer_getTrapezoidEnv(tesp) ((MMTrapEnvedSamplePlayer*)(tesp))->teg.te
 
 #endif /* MM_TRAPENVEDSAMPLEPLAYER_H */

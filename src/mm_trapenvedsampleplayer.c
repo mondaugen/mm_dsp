@@ -36,3 +36,29 @@ void MMTrapEnvedSamplePlayer_noteOn(
     MMTrapezoidEnv_setEnvParams(&tesp->teg.te,0, amplitude, attackTime, releaseTime);
     MMEnvelope_startAttack(&MMTrapEnvedSamplePlayer_getTrapezoidEnv(tesp));
 }
+
+/* set the rate of playback rather than the MIDI note, but still index it by a
+ * note to keep track of the voice */
+void MMTrapEnvedSamplePlayer_noteOn_Rate(
+        MMTrapEnvedSamplePlayer *tesp,
+        MMSample        note,
+        MMSample        amplitude,
+        MMInterpMethod  interpolation,
+        MMSample        index,
+        MMSample        attackTime,
+        MMSample        releaseTime,
+        MMWavTab        *samples,
+        MMBool          loop,
+        MMSample        rate)
+{
+    MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).interp = interpolation;
+    MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).index = index;
+    MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).note = note;
+    MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).rate = rate;
+    MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).loop = loop;
+    MMSigProc_setState(&MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp),
+                        MMSigProc_State_PLAYING);
+    MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).samples = samples;
+    MMTrapezoidEnv_setEnvParams(&tesp->teg.te,0, amplitude, attackTime, releaseTime);
+    MMEnvelope_startAttack(&MMTrapEnvedSamplePlayer_getTrapezoidEnv(tesp));
+}
