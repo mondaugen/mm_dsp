@@ -35,11 +35,16 @@ struct __MMSamplePlayerSigProc {
     MMInterpMethod  interp;
 };
 
+typedef enum {
+    MMSamplePlayerTickType_NOSUM,
+    MMSamplePlayerTickType_SUM
+} MMSamplePlayerTickType;
+
 #define MMSamplePlayerSigProc_free(spsp) free(spsp) 
 
 MMSamplePlayerSigProc *MMSamplePlayerSigProc_new(void);
 MMSamplePlayer *MMSamplePlayer_new(void);
-void MMSamplePlayerSigProc_init(MMSamplePlayerSigProc *spsp);
+void MMSamplePlayerSigProc_init(MMSamplePlayerSigProc *spsp, MMSamplePlayerTickType tt);
 void MMSamplePlayer_init(MMSamplePlayer *sp);
 
 /* Functions for getting samples with vairous interpolations */
@@ -48,10 +53,27 @@ void MMSamplePlayer_init(MMSamplePlayer *sp);
 
 #define MMSamplePlayerSigProc_getSampleInterpNone_(spsp,pdest) \
     do { \
+        *(pdest) = MMWavTab_get(((spsp)->samples),(spsp)->index); \
+    } while (0)
+
+#define MMSamplePlayerSigProc_getSampleInterpNone_sum_(spsp,pdest) \
+    do { \
         *(pdest) += MMWavTab_get(((spsp)->samples),(spsp)->index); \
     } while (0)
 
 #define MMSamplePlayerSigProc_getSampleInterpLinear_(spsp,pdest) \
+    do { \
+        int __x0 = (int)(spsp)->index; \
+        int __x1 = MM_wrap((int)(spsp)->index + 1, 0,  \
+                (int)MMArray_get_length(spsp->samples)); \
+        *(pdest) = MM_f_interp_linear_(__x0, \
+                MMWavTab_get(((spsp)->samples),__x0), \
+                __x1, \
+                MMWavTab_get(((spsp)->samples), __x1), \
+                (spsp)->index); \
+    } while (0)
+
+#define MMSamplePlayerSigProc_getSampleInterpLinear_sum_(spsp,pdest) \
     do { \
         int __x0 = (int)(spsp)->index; \
         int __x1 = MM_wrap((int)(spsp)->index + 1, 0,  \
@@ -105,6 +127,25 @@ void MMSamplePlayer_init(MMSamplePlayer *sp);
 
 /* Uses the "mu" cubic interpolation */
 #define MMSamplePlayerSigProc_getSampleInterpCubicMu_(spsp,pdest) \
+    do { \
+        int __x0 = MM_wrap((int)(spsp)->index - 1, 0, \
+                (int)MMArray_get_length(spsp->samples)); \
+        int __x1 = MM_wrap((int)(spsp)->index    , 0,  \
+                (int)MMArray_get_length(spsp->samples)); \
+        int __x2 = MM_wrap((int)(spsp)->index + 1, 0,  \
+                (int)MMArray_get_length(spsp->samples)); \
+        int __x3 = MM_wrap((int)(spsp)->index + 2, 0, \
+                (int)MMArray_get_length(spsp->samples)); \
+        MMSample __y0 = MMWavTab_get(((spsp)->samples),__x0); \
+        MMSample __y1 = MMWavTab_get(((spsp)->samples),__x1); \
+        MMSample __y2 = MMWavTab_get(((spsp)->samples),__x2); \
+        MMSample __y3 = MMWavTab_get(((spsp)->samples),__x3); \
+        *(pdest) = MM_f_interp_cubic_mu_(__y0, __y1, __y2, __y3, \
+                (spsp)->index - (int)((spsp)->index)); \
+    } while (0)
+
+/* Uses the "mu" cubic interpolation */
+#define MMSamplePlayerSigProc_getSampleInterpCubicMu_sum_(spsp,pdest) \
     do { \
         int __x0 = MM_wrap((int)(spsp)->index - 1, 0, \
                 (int)MMArray_get_length(spsp->samples)); \
