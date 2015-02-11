@@ -13,8 +13,13 @@ struct __MMPolyManager {
  * voice. params must have been alloced with malloc() and can be freed with
  * free(). when stealing is off, params are freed immediately after being used
  * to turn the voice on. when stealing is on, the "doOnDone" method of the
- * MMPolyVoice (it should have one!) should free the params. */
-void MMPolyManager_noteOn(MMPolyManager *pm, MMPolyVoiceParams *params, MMPolyManagerSteal steal)
+ * MMPolyVoice (it should have one!) should free the params. If retrigger is
+ * TRUE then a voice that is already playing will be retriggered, otherwise the
+ * message will just get ignored. */
+void MMPolyManager_noteOn(MMPolyManager *pm, 
+                          MMPolyVoiceParams *params,
+                          MMPolyManagerSteal steal,
+                          MMPolyManagerRetrigger retrigger)
 {
     /* Check if note is already playing */
     MMPolyVoice *pv;
@@ -22,7 +27,7 @@ void MMPolyManager_noteOn(MMPolyManager *pm, MMPolyVoiceParams *params, MMPolyMa
     while (pv) {
         params->parent = pv;
         if (MMPolyVoice_compare(pv,params) == 0) {
-            MMPolyVoice_turnOn(pv,params);
+            (retrigger == MMPolyManagerRetrigger_TRUE) ? MMPolyVoice_turnOn(pv,params) : 0;
             free(params); /* free params because they will not be used again */
             return;
         }

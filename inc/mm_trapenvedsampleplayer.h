@@ -37,7 +37,7 @@ void MMTrapEnvedSamplePlayer_noteOn_Rate(
         MMSample        releaseTime,
         MMWavTab        *samples,
         MMBool          loop,
-        MMSample        rate)
+        MMSample        rate);
 
 #define MMTrapEnvedSamplePlayer_getTrapezoidEnv(tesp) ((MMTrapEnvedSamplePlayer*)(tesp))->teg.te
 

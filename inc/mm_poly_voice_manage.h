@@ -7,9 +7,14 @@
 /* Handle allocation of polyphonic notes. */
 
 typedef enum {
-    MMPolyManagerSteal_TRUE,
     MMPolyManagerSteal_FALSE,
+    MMPolyManagerSteal_TRUE,
 } MMPolyManagerSteal;
+
+typedef enum {
+    MMPolyManagerRetrigger_FALSE,
+    MMPolyManagerRetrigger_TRUE,
+} MMPolyManagerRetrigger;
 
 typedef enum {
     MMPolyVoiceUsed_TRUE,
@@ -40,6 +45,11 @@ struct __MMPolyVoice {
 
 struct __MMPolyVoiceParams {
     MMPolyVoice *parent;
+    /* Something that can give unique voice numbers, and that
+       needs to be let know when a voice is freed. */
+    void *allocator; 
+    /* The way that the allocator is let know when a voice is freed. */
+    void (*yield_params_to_allocator)(void *allocator, void *params);
 };
 
 #define MMPolyVoice_set_used(pv,u)            ((MMPolyVoice*)pv)->used = u
@@ -56,7 +66,10 @@ struct __MMPolyVoiceParams {
 
 typedef struct __MMPolyManager MMPolyManager;
 
-void MMPolyManager_noteOn(MMPolyManager *pm, MMPolyVoiceParams *params, MMPolyManagerSteal steal);
+void MMPolyManager_noteOn(MMPolyManager *pm,
+                          MMPolyVoiceParams *params,
+                          MMPolyManagerSteal steal,
+                          MMPolyManagerRetrigger retrigger);
 
 void MMPolyManager_noteOff(MMPolyManager *pm, MMPolyVoiceParams *params);
 

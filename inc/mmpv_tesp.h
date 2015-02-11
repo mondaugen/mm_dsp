@@ -17,6 +17,14 @@ typedef enum {
                                    note finished decaying */
 } MMPvtespParamType;
 
+typedef enum {
+    MMPvtespRateSource_NOTE,    /* Note will be used to set the rate of the
+                                   playback (interpreted as a midi note). Rate is ignored. */
+    MMPvtespRateSource_RATE     /* Rate will be used to set the rate of playback
+                                   (1.0 is normal speed for example). Note still
+                                   used to keep track of the "voice" */
+} MMPvtespRateSource;
+
 /* On a note on you can indicate note (MIDI note where 60 = middle C, but can be
  * of type MMSample), amplitude (MMSample), interpolation (one of
  * MMInterpMethod), starting index (samples), attack time (seconds), release
@@ -25,6 +33,8 @@ typedef enum {
 struct __MMPvtespParams {
     MMPolyVoiceParams   head;
     MMPvtespParamType   paramType;
+    MMPvtespRateSource  rateSource;
+    MMSample            rate;
     MMSample            note;
     MMSample            amplitude;
     MMInterpMethod      interpolation;

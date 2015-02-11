@@ -1,7 +1,33 @@
 /* An poly voice for an trapezoid enveloped sample player */
 /* This is sort of a proof-of-concept and will probably become obsolete when the
  * MMEnvedSamplePlayer is generalized for arbitrary envelopes */
-#include "mmpv_tesp.h" 
+#include "mmpv_tesp.h"
+
+#define MMTrapEnvedSamplePlayer_noteOn_CHECK_RATE_SOURCE(tesp,np)\
+    if (np->rateSource == MMPvtespRateSource_RATE) {\
+        MMTrapEnvedSamplePlayer_noteOn_Rate(\
+                tesp,\
+                np->note,\
+                np->amplitude,\
+                np->interpolation,\
+                np->index,\
+                np->attackTime,\
+                np->releaseTime,\
+                np->samples,\
+                np->loop,\
+                np->rate);\
+    } else {\
+        MMTrapEnvedSamplePlayer_noteOn(\
+                tesp,\
+                np->note,\
+                np->amplitude,\
+                np->interpolation,\
+                np->index,\
+                np->attackTime,\
+                np->releaseTime,\
+                np->samples,\
+                np->loop);\
+    }
 
 struct __MMPvtesp {
     MMPolyVoice head;
@@ -14,16 +40,7 @@ static void MMPvtesp_turnOn(MMPolyVoice *pv, MMPolyVoiceParams *params)
     MMPvtespParams *np = (MMPvtespParams*)params;
     /* Formally, the paramType should only be of type NOTEON but we're loose
      * about it and don't check */
-    MMTrapEnvedSamplePlayer_noteOn(
-        tesp,
-        np->note,
-        np->amplitude,
-        np->interpolation,
-        np->index,
-        np->attackTime,
-        np->releaseTime,
-        np->samples,
-        np->loop);
+    MMTrapEnvedSamplePlayer_noteOn_CHECK_RATE_SOURCE(tesp,np);
     params->parent->used = MMPolyVoiceUsed_TRUE;
 }
 
@@ -44,21 +61,18 @@ static void MMPvtesp_onDone(MMEnvedSamplePlayer *esp)
 {
     MMTrapEnvedSamplePlayer *tesp = (MMTrapEnvedSamplePlayer*)esp;
     MMPvtespParams *np = (MMPvtespParams*)esp->onDoneParams;
+    /* If there's an allocator, let it know that this note was
+     * freed */
+    ((MMPolyVoiceParams*)np)->allocator ? :
+        ((MMPolyVoiceParams*)np)->yield_value_to_allocator(
+            ((MMPolyVoiceParams*)np)->allocator,
+            /* the allocator yielding function should expect a note of type MMSample* */
+            (void *)&tesp->note);
+        : 0;
     /* If params is from a NOTEON, that means the note was stolen, told to end,
      * ended, and now needs to be retriggered */
     if (np->paramType == MMPvtespParamType_NOTEON) {
-    MMTrapEnvedSamplePlayer_noteOn(
-        tesp,
-        np->note,
-        np->amplitude,
-        np->interpolation,
-        np->index,
-        np->attackTime,
-        np->releaseTime,
-        np->samples,
-        np->loop);
-//        MMTrapEnvedSamplePlayer_noteOn(tesp, np->interpolation, np->index, np->note,
-//                np->amplitude, np->attackTime, np->releaseTime, np->samples, np->loop);
+        MMTrapEnvedSamplePlayer_noteOn_CHECK_RATE_SOURCE(tesp,np);
     } else {
         /* Mark note as NOT being played */
         ((MMPolyVoiceParams*)np)->parent->used = MMPolyVoiceUsed_FALSE;
@@ -122,6 +136,8 @@ MMPvtespParams *MMPvtespParams_new()
 {
     MMPvtespParams *result = (MMPvtespParams*)malloc(sizeof(MMPvtespParams));
     result->paramType       = MMPvtespParamType_NOTEOFF;
+    result->rateSource      = MMPvtespRateSource_NOTE;
+    result->rate            = 0;
     result->note            = 0;
     result->amplitude       = 0;
     result->interpolation   = MMInterpMethod_NONE;
