@@ -63,11 +63,11 @@ static void MMPvtesp_onDone(MMEnvedSamplePlayer *esp)
     MMPvtespParams *np = (MMPvtespParams*)esp->onDoneParams;
     /* If there's an allocator, let it know that this note was
      * freed */
-    ((MMPolyVoiceParams*)np)->allocator ? :
-        ((MMPolyVoiceParams*)np)->yield_value_to_allocator(
+    ((MMPolyVoiceParams*)np)->allocator ?
+        ((MMPolyVoiceParams*)np)->yield_params_to_allocator(
             ((MMPolyVoiceParams*)np)->allocator,
             /* the allocator yielding function should expect a note of type MMSample* */
-            (void *)&tesp->note);
+            (void *)&(MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).note))
         : 0;
     /* If params is from a NOTEON, that means the note was stolen, told to end,
      * ended, and now needs to be retriggered */
