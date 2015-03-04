@@ -24,6 +24,7 @@ void MMTrapEnvedSamplePlayer_noteOn(
         MMSample        index,
         MMSample        attackTime,
         MMSample        releaseTime,
+        MMSample        sustainTime,
         MMWavTab        *samples,
         MMBool          loop);
 
@@ -35,6 +36,7 @@ void MMTrapEnvedSamplePlayer_noteOn_Rate(
         MMSample        index,
         MMSample        attackTime,
         MMSample        releaseTime,
+        MMSample        sustainTime,
         MMWavTab        *samples,
         MMBool          loop,
         MMSample        rate);

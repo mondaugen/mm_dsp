@@ -21,6 +21,7 @@ void MMTrapEnvedSamplePlayer_noteOn(
         MMSample        index,
         MMSample        attackTime,
         MMSample        releaseTime,
+        MMSample        sustainTime,
         MMWavTab        *samples,
         MMBool          loop)
 {
@@ -33,7 +34,7 @@ void MMTrapEnvedSamplePlayer_noteOn(
     MMSigProc_setState(&MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp),
                         MMSigProc_State_PLAYING);
     MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).samples = samples;
-    MMTrapezoidEnv_setEnvParams(&tesp->teg.te,0, amplitude, attackTime, releaseTime,-1);
+    MMTrapezoidEnv_setEnvParams(&tesp->teg.te,0, amplitude, attackTime, releaseTime,sustainTime);
     MMEnvelope_startAttack(&MMTrapEnvedSamplePlayer_getTrapezoidEnv(tesp));
 }
 
@@ -47,6 +48,7 @@ void MMTrapEnvedSamplePlayer_noteOn_Rate(
         MMSample        index,
         MMSample        attackTime,
         MMSample        releaseTime,
+        MMSample        sustainTime,
         MMWavTab        *samples,
         MMBool          loop,
         MMSample        rate)
@@ -59,6 +61,6 @@ void MMTrapEnvedSamplePlayer_noteOn_Rate(
     MMSigProc_setState(&MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp),
                         MMSigProc_State_PLAYING);
     MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).samples = samples;
-    MMTrapezoidEnv_setEnvParams(&tesp->teg.te,0, amplitude, attackTime, releaseTime,-1);
+    MMTrapezoidEnv_setEnvParams(&tesp->teg.te,0, amplitude, attackTime, releaseTime, sustainTime);
     MMEnvelope_startAttack(&MMTrapEnvedSamplePlayer_getTrapezoidEnv(tesp));
 }

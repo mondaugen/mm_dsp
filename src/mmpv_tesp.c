@@ -3,6 +3,8 @@
  * MMEnvedSamplePlayer is generalized for arbitrary envelopes */
 #include "mmpv_tesp.h"
 
+/* Choose noteOn method by checking the rate source. Using the sustain time is
+ * not supported when using the poly_voice_manager. */
 #define MMTrapEnvedSamplePlayer_noteOn_CHECK_RATE_SOURCE(tesp,np)\
     if (np->rateSource == MMPvtespRateSource_RATE) {\
         MMTrapEnvedSamplePlayer_noteOn_Rate(\
@@ -13,6 +15,7 @@
                 np->index,\
                 np->attackTime,\
                 np->releaseTime,\
+                -1,\
                 np->samples,\
                 np->loop,\
                 np->rate);\
@@ -25,6 +28,7 @@
                 np->index,\
                 np->attackTime,\
                 np->releaseTime,\
+                -1,\
                 np->samples,\
                 np->loop);\
     }
