@@ -18,7 +18,8 @@ void MMTrapEnvGen_init(  MMTrapEnvGen *teg,
                          MMSample min,
                          MMSample max,
                          MMSample attackTime,
-                         MMSample releaseTime);
+                         MMSample releaseTime,
+                         MMSample sustainTime);
 
 #define MMTrapEnvGen_get(te) ((MMTrapEnvGen *)te) 
 

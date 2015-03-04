@@ -22,7 +22,7 @@ struct __MMEnvGen {
 #define MMEnvGen_getBus(e)                MMEnvGen_get(e)->outBus
 #define MMEnvGen_getDeltaTime(e)          MMEnvGen_get(e)->deltaTime
 
-#define MMEnvGen_init(e,b,dt) MMSigProc_init(e);\
+#define MMEnvGen_init(e,b,dt) MMSigProc_init((MMSigProc*)e);\
                               MMEnvGen_setBus(e,b);\
                               MMEnvGen_setDeltaTime(e,dt)
                         

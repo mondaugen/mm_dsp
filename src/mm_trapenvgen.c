@@ -21,9 +21,10 @@ void MMTrapEnvGen_init(  MMTrapEnvGen *teg,
                          MMSample min,
                          MMSample max,
                          MMSample attackTime,
-                         MMSample releaseTime)
+                         MMSample releaseTime,
+                         MMSample sustainTime)
 {
     MMEnvGen_init(teg, outBus, deltaTime);
-    MMTrapezoidEnv_init(&teg->te,min,max,attackTime,releaseTime);
+    MMTrapezoidEnv_init(&teg->te,min,max,attackTime,releaseTime,sustainTime);
     MMSigProc_setTick(teg,MMTrapEnvGen_tick);
 }
