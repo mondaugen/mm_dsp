@@ -1,15 +1,17 @@
-MMDSP_SRCS_PATH = src
-MMDSP_SRCS      = $(wildcard $(MMDSP_SRCS_PATH)/*.c)
-MMDSP_INC_PATH  = inc
-MMDSP_OBJS      = $(MMDSP_SRCS:$(MMDSP_SRCS_PATH)/%.c=objs/%.o)
-# this should also include the dependencies of external libraries
-MMDSP_DEP       = $(wildcard $(MMDSP_INC_PATH)/*.h)
-MMDSP_CFLAGS	= -Ofast
-
 # requires mm_primitives library
 # assumes it is contained in the parent directory
 MMPRIMITIVES_PATH = ../mm_primitives
 MMPRIMITIVES_INC_PATH = $(MMPRIMITIVES_PATH)/inc
+
+MMDSP_SRCS_PATH = src
+MMDSP_SRCS      = $(wildcard $(MMDSP_SRCS_PATH)/*.c)
+MMDSP_INC_PATH  = inc
+MMDSP_OBJS      = $(MMDSP_SRCS:$(MMDSP_SRCS_PATH)/%.c=objs/%.o)
+# this includes the dependencies of external libraries
+MMDSP_DEP       = $(wildcard $(MMDSP_INC_PATH)/*.h)
+MMDSP_DEP	   += $(wildcard $(MMPRIMITIVES_INC_PATH)/*.h)
+MMDSP_CFLAGS	= -Ofast
+
 INC		= $(MMDSP_INC_PATH) $(MMPRIMITIVES_INC_PATH)
 CFLAGS	= $(foreach inc,$(INC),-I$(inc))
 
