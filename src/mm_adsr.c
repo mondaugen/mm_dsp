@@ -1,9 +1,10 @@
 #include "mm_adsr.h"
 
+/* I don't think this works. */
 
-static MMSigProc_Err MMAdsr_tick(MMSigProc *sp)
+
+static void MMAdsr_tick(MMSigProc *sp)
 {
-    return MMSigProc_Err_NOTINIT;
 }
 //{
 //    /* Call superclass tick method */
