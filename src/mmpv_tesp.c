@@ -52,6 +52,14 @@ static void MMPvtesp_turnOff(MMPolyVoice *pv, MMPolyVoiceParams *params)
      * parameter type is NOTEON on NOTEOFF we just use the releaseTime. The only
      * difference is that for NOTEON, the release time should probably be
      * shorter (but this function is not responsible for this) */
+    if ((params->steal == MMPolyManagerSteal_FALSE) &&
+            (MMEnvelope_getState(&MMTrapEnvedSamplePlayer_getTrapezoidEnv(tesp))
+            == MMTrapezoidEnvState_RELEASE)) {
+        /* If stealing is not allowed, and this note is already releasing, then
+         * we don't want to retrigger the release as that would lengthen the
+         * release and make it so the note is free (available) even later. */
+        return; /* Already releasing */
+    }
     MMTrapEnvedSamplePlayer_getTrapezoidEnv(tesp).releaseTime = np->releaseTime;
     MMEnvelope_startRelease(&MMTrapEnvedSamplePlayer_getTrapezoidEnv(tesp));
 }
@@ -135,6 +143,7 @@ MMPvtesp *MMPvtesp_new(MMTrapEnvedSamplePlayer *tesp)
 MMPvtespParams *MMPvtespParams_new()
 {
     MMPvtespParams *result = (MMPvtespParams*)malloc(sizeof(MMPvtespParams));
+    MMPolyVoiceParams_init(result);
     result->paramType       = MMPvtespParamType_NOTEOFF;
     result->rateSource      = MMPvtespRateSource_NOTE;
     result->rate            = 0;
