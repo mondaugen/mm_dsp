@@ -64,7 +64,11 @@ static void MMTrapezoidEnv_incTime(MMEnvelope *te, MMSample deltaTime)
 }
 
 /* releaseTime must be known upon init so that the envelope knows how long to
- * fade out for if stolen */
+ * fade out for if stolen. If sustain time is >= 0. then the note will turn
+ * itself off by keeping track of how long it has sustained for and initializing
+ * the release section after this amount of time has passed. If sustain time <
+ * 0, then the envelope expects that it will be turned off at a later point
+ * (e.g., due to a note off message). */
 void MMTrapezoidEnv_init(MMTrapezoidEnv *te,
                          MMSample min,
                          MMSample max,
