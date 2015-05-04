@@ -9,17 +9,17 @@ struct __MMPolyManager {
     MMPolyVoice playingVoices;
 };
 
-/* Turn a note on using params. If steal is set, then will steal the oldest
- * voice. params must have been alloced with malloc() and can be freed with
- * free(). when stealing is off, params are freed immediately after being used
- * to turn the voice on. when stealing is on, the "doOnDone" method of the
- * MMPolyVoice (it should have one!) should free the params. If retrigger is
- * TRUE then a voice that is already playing will be retriggered, otherwise the
- * message will just get ignored. */
+/* Turn a note on using params. If params->steal is set, it will steal the
+ * oldest voice if the current note is not already playing. If the note is
+ * already playing, it will steal that note.
+ * Params must have been allocated with malloc and can be freed with free.
+ * When stealing is off, the params are freed immediately after being used to
+ * turn the voice on.
+ * When stealing is on, the "doOnDone" method of the MMPolyVoice should free the
+ * params.
+ */
 void MMPolyManager_noteOn(MMPolyManager *pm, 
-                          MMPolyVoiceParams *params,
-                          MMPolyManagerSteal steal,
-                          MMPolyManagerRetrigger retrigger)
+                          MMPolyVoiceParams *params)
 {
     /* Check if note is already playing */
     MMPolyVoice *pv;
@@ -27,8 +27,22 @@ void MMPolyManager_noteOn(MMPolyManager *pm,
     while (pv) {
         params->parent = pv;
         if (MMPolyVoice_compare(pv,params) == 0) {
-            (retrigger == MMPolyManagerRetrigger_TRUE) ? MMPolyVoice_turnOn(pv,params) : 0;
-            free(params); /* free params because they will not be used again */
+            if (params->steal == MMPolyManagerSteal_TRUE) {
+                /* Remove this voice (because it will be repositioned, it will
+                 * be new) */
+                pv = (MMPolyVoice*)MMDLList_remove((MMDLList*)pv);
+                /* The function attached here should start a new note playing when the note
+                 * has finished. */
+                MMPolyVoice_attachOnTurnOff(pv,params);
+                /* Attach the note that is now turning off and will be retriggered to
+                 * the front of the list because it is new */
+                MMDLList_insertAfter((MMDLList*)&pm->playingVoices,(MMDLList*)pv);
+                MMPolyVoice_turnOff(pv,params);
+                /* don't free the params !! whatever happens when the note eventually
+                 * turns off still needs the params! */
+            } else {
+                free(params); /* free params because they will not be used again */
+            }
             return;
         }
         pv = (MMPolyVoice*)MMDLList_getNext(pv);
@@ -45,7 +59,7 @@ void MMPolyManager_noteOn(MMPolyManager *pm,
         }
     }
     /* So there wasn't a free voice, if we're allowed to steal, do it */
-    if (steal == MMPolyManagerSteal_TRUE) {
+    if (params->steal == MMPolyManagerSteal_TRUE) {
         /* remove the tail */
         pv = (MMPolyVoice*)MMDLList_remove(MMDLList_getTail((MMDLList*)&pm->playingVoices));
         params->parent = pv;

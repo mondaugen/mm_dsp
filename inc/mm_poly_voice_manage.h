@@ -12,11 +12,6 @@ typedef enum {
 } MMPolyManagerSteal;
 
 typedef enum {
-    MMPolyManagerRetrigger_FALSE,
-    MMPolyManagerRetrigger_TRUE,
-} MMPolyManagerRetrigger;
-
-typedef enum {
     MMPolyVoiceUsed_TRUE,
     MMPolyVoiceUsed_FALSE,
 } MMPolyVoiceUsed;
@@ -44,6 +39,7 @@ struct __MMPolyVoice {
 };
 
 struct __MMPolyVoiceParams {
+    MMPolyManagerSteal steal; /* Whether or not we steal a note */
     MMPolyVoice *parent;
     /* Something that can give unique voice numbers, and that
        needs to be let know when a voice is freed. */
@@ -52,6 +48,11 @@ struct __MMPolyVoiceParams {
     void (*yield_params_to_allocator)(void *allocator, void *params);
 };
 
+#define MMPolyVoiceParams_init(pvp)           ((MMPolyVoiceParams*)pvp)->steal = MMPolyManagerSteal_FALSE;\
+                                              ((MMPolyVoiceParams*)pvp)->parent = NULL;\
+                                              ((MMPolyVoiceParams*)pvp)->allocator = NULL;\
+                                              ((MMPolyVoiceParams*)pvp)->yield_params_to_allocator = NULL
+                                                 
 #define MMPolyVoice_set_used(pv,u)            ((MMPolyVoice*)pv)->used = u
 #define MMPolyVoice_set_turnOn(pv,f)          ((MMPolyVoice*)pv)->turnOn = f
 #define MMPolyVoice_set_turnOff(pv,f)         ((MMPolyVoice*)pv)->turnOff = f
@@ -67,9 +68,7 @@ struct __MMPolyVoiceParams {
 typedef struct __MMPolyManager MMPolyManager;
 
 void MMPolyManager_noteOn(MMPolyManager *pm,
-                          MMPolyVoiceParams *params,
-                          MMPolyManagerSteal steal,
-                          MMPolyManagerRetrigger retrigger);
+                          MMPolyVoiceParams *params);
 
 void MMPolyManager_noteOff(MMPolyManager *pm, MMPolyVoiceParams *params);
 
