@@ -42,4 +42,13 @@ typedef enum
      + ((y0)-(y1)-((y3)-(y2)-(y1)+(y1))) * ((mu)*(mu)) \
      + ((y2)-(y0)) * (mu) + ((y1)))
 
+/* Cubic interpolation as described by Miller Puckette in his "Theory and
+ * Technique of Electronic Music." Seems the best so far. */
+#define MM_f_interp_cubic_msp_(y_1,y0,y1,y2,mu)\
+    (-(mu)*((mu)-1.)*((mu)-2.)/6.*(y_1)        \
+     +((mu)+1.)*((mu)-1.)*((mu)-2.)/2.*(y0)    \
+     -((mu)+1.)*(mu)*((mu)-2.)/2.*(y1)         \
+     +((mu)+1.)*(mu)*((mu)-1.)/6.*(y2));       \
+
+
 #endif /* MM_INTERP_H */
