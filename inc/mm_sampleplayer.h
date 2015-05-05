@@ -163,4 +163,42 @@ void MMSamplePlayer_init(MMSamplePlayer *sp);
                 (spsp)->index - (int)((spsp)->index)); \
     } while (0)
 
+/* Uses Miller Puckette's cubic interpolation */
+#define MMSamplePlayerSigProc_getSampleInterpCubicMsp_(spsp,pdest) \
+    do { \
+        int __x0 = MM_wrap((int)(spsp)->index - 1, 0, \
+                (int)MMArray_get_length(spsp->samples)); \
+        int __x1 = MM_wrap((int)(spsp)->index    , 0,  \
+                (int)MMArray_get_length(spsp->samples)); \
+        int __x2 = MM_wrap((int)(spsp)->index + 1, 0,  \
+                (int)MMArray_get_length(spsp->samples)); \
+        int __x3 = MM_wrap((int)(spsp)->index + 2, 0, \
+                (int)MMArray_get_length(spsp->samples)); \
+        MMSample __y0 = MMWavTab_get(((spsp)->samples),__x0); \
+        MMSample __y1 = MMWavTab_get(((spsp)->samples),__x1); \
+        MMSample __y2 = MMWavTab_get(((spsp)->samples),__x2); \
+        MMSample __y3 = MMWavTab_get(((spsp)->samples),__x3); \
+        *(pdest) = MM_f_interp_cubic_msp_(__y0, __y1, __y2, __y3, \
+                (spsp)->index - (int)((spsp)->index)); \
+    } while (0)
+
+/* Uses Miller Puckette's cubic interpolation */
+#define MMSamplePlayerSigProc_getSampleInterpCubicMsp_sum_(spsp,pdest) \
+    do { \
+        int __x0 = MM_wrap((int)(spsp)->index - 1, 0, \
+                (int)MMArray_get_length(spsp->samples)); \
+        int __x1 = MM_wrap((int)(spsp)->index    , 0,  \
+                (int)MMArray_get_length(spsp->samples)); \
+        int __x2 = MM_wrap((int)(spsp)->index + 1, 0,  \
+                (int)MMArray_get_length(spsp->samples)); \
+        int __x3 = MM_wrap((int)(spsp)->index + 2, 0, \
+                (int)MMArray_get_length(spsp->samples)); \
+        MMSample __y0 = MMWavTab_get(((spsp)->samples),__x0); \
+        MMSample __y1 = MMWavTab_get(((spsp)->samples),__x1); \
+        MMSample __y2 = MMWavTab_get(((spsp)->samples),__x2); \
+        MMSample __y3 = MMWavTab_get(((spsp)->samples),__x3); \
+        *(pdest) += MM_f_interp_cubic_msp_(__y0, __y1, __y2, __y3, \
+                (spsp)->index - (int)((spsp)->index)); \
+    } while (0)
+
 #endif /* MM_SAMPLEPLAYER_H */

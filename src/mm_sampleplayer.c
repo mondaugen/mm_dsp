@@ -29,7 +29,7 @@ static void MMSamplePlayerSigProc_tick_sum(MMSigProc *sp)
                         spsp->parent->outBus->data + i);
                 break;
             case MMInterpMethod_CUBIC:
-                MMSamplePlayerSigProc_getSampleInterpCubicMu_sum_(spsp,
+                MMSamplePlayerSigProc_getSampleInterpCubicMsp_sum_(spsp,
                         spsp->parent->outBus->data + i);
                 break;
             default:
@@ -80,7 +80,7 @@ static void MMSamplePlayerSigProc_tick_no_sum(MMSigProc *sp)
                         spsp->parent->outBus->data + i);
                 break;
             case MMInterpMethod_CUBIC:
-                MMSamplePlayerSigProc_getSampleInterpCubicMu_(spsp,
+                MMSamplePlayerSigProc_getSampleInterpCubicMsp_(spsp,
                         spsp->parent->outBus->data + i);
                 break;
             default:
