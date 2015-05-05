@@ -66,11 +66,10 @@ void MMSamplePlayer_init(MMSamplePlayer *sp);
         int __x0 = (int)(spsp)->index; \
         int __x1 = MM_wrap((int)(spsp)->index + 1, 0,  \
                 (int)MMArray_get_length(spsp->samples)); \
-        *(pdest) = MM_f_interp_linear_(__x0, \
+        *(pdest) = MM_f_interp_linear_msp_( \
                 MMWavTab_get(((spsp)->samples),__x0), \
-                __x1, \
-                MMWavTab_get(((spsp)->samples), __x1), \
-                (spsp)->index); \
+                MMWavTab_get(((spsp)->samples),__x1), \
+                (spsp)->index - (int)((spsp)->index));\
     } while (0)
 
 #define MMSamplePlayerSigProc_getSampleInterpLinear_sum_(spsp,pdest) \
@@ -78,11 +77,10 @@ void MMSamplePlayer_init(MMSamplePlayer *sp);
         int __x0 = (int)(spsp)->index; \
         int __x1 = MM_wrap((int)(spsp)->index + 1, 0,  \
                 (int)MMArray_get_length(spsp->samples)); \
-        *(pdest) += MM_f_interp_linear_(__x0, \
+        *(pdest) += MM_f_interp_linear_msp_( \
                 MMWavTab_get(((spsp)->samples),__x0), \
-                __x1, \
-                MMWavTab_get(((spsp)->samples), __x1), \
-                (spsp)->index); \
+                MMWavTab_get(((spsp)->samples),__x1), \
+                (spsp)->index - (int)((spsp)->index));\
     } while (0)
     
 /* This is slow and sucks */

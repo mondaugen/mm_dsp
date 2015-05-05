@@ -16,6 +16,10 @@ typedef enum
             /(((MMSample)(x2)) - ((MMSample)(x1)))) * (((MMSample)(x))\
             - ((MMSample)(x1))) + ((MMSample)(y1)))
 
+/* Linear interpolation as described by Miller Puckette in his "Theory and
+ * Technique of Electronic Music." */
+#define MM_f_interp_linear_msp_(y0,y1,mu) ((y0)+((y1)-(y0))*(mu)) 
+
 /* Linear interpolation but assume x1 = 0 and x2 = 1 */
 #define MM_f_interp_linear_norm_(y1,y2,x) cm_flinterp_(0,y1,1,y2,x)
 
