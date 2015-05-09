@@ -89,9 +89,12 @@ static void MMSamplePlayerSigProc_tick_no_sum(MMSigProc *sp)
         }
         spsp->index += spsp->rate;
         if (spsp->loop) {
-            spsp->index = MM_fwrap(spsp->index, 0,
-                    MMArray_get_length(spsp->samples));
-        } else if ((spsp->index >= MMArray_get_length(spsp->samples))
+            spsp->index = MM_wrapl(spsp->index, 0,
+                    ((MMSamplePlayerQ_t)MMArray_get_length(spsp->samples)) 
+                        << MMSAMPLEPLAYER_Q_WIDTH_FRAC);
+        } else if ((spsp->index 
+                    >= (((MMSamplePlayerQ_t)MMArray_get_length(spsp->samples)) 
+                        << MMSAMPLEPLAYER_Q_WIDTH_FRAC))
                 || (spsp->index < 0)) {
             MMSigProc_setState(spsp,MMSigProc_State_DONE);
             i = (spsp->parent->outBus->size * spsp->parent->outBus->channels);

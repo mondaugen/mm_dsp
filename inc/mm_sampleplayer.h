@@ -9,6 +9,14 @@
 #include "mm_wavtab.h" 
 #include "mm_wrap.h" 
 #include "mm_interp.h" 
+#include <stdint.h> 
+
+/* The fixed-precision type */
+typedef int64_t MMSamplePlayerQ_t;
+/* The number of integer bits of this type */
+#define MMSAMPLEPLAYER_Q_WIDTH_INT 32
+/* The number of fraction bits of this type */
+#define MMSAMPLEPLAYER_Q_WIDTH_FRAC 32 
 
 typedef struct __MMSamplePlayer MMSamplePlayer;
 
@@ -24,8 +32,8 @@ typedef struct __MMSamplePlayerSigProc MMSamplePlayerSigProc;
 struct __MMSamplePlayerSigProc {
     MMSigProc         head; /* subclasses MMSigProc */
     MMWavTab      *samples;
-    MMSample         index;
-    MMSample          rate;
+    MMSamplePlayerQ_t index;
+    MMSamplePlayerQ_t rate;
     MMSample          note; /* the midi note of this instance, because rate may
                                be modulated so we need something static to
                                compare to check if a particular note is sounding
@@ -47,7 +55,12 @@ MMSamplePlayer *MMSamplePlayer_new(void);
 void MMSamplePlayerSigProc_init(MMSamplePlayerSigProc *spsp, MMSamplePlayerTickType tt);
 void MMSamplePlayer_init(MMSamplePlayer *sp);
 
-/* Functions for getting samples with vairous interpolations */
+/* Set the rate, which is a Q type, using a float */
+#define MMSamplePlayerSigProc_setRate_flt_(spsp,f) \
+    (spsp)->rate = (MMSamplePlayerQ_t)(f \
+            * ((float)(1l << MMSAMPLEPLAYER_Q_WIDTH_FRAC)));
+
+/* Functions for getting samples with various interpolations */
 /* spsp is a pointer to a MMSamplePlayerSigProc and pdest is a pointer to an
  * MMSample */
 
@@ -62,26 +75,10 @@ void MMSamplePlayer_init(MMSamplePlayer *sp);
     } while (0)
 
 #define MMSamplePlayerSigProc_getSampleInterpLinear_(spsp,pdest) \
-    do { \
-        int __x0 = (int)(spsp)->index; \
-        int __x1 = MM_wrap((int)(spsp)->index + 1, 0,  \
-                (int)MMArray_get_length(spsp->samples)); \
-        *(pdest) = MM_f_interp_linear_msp_( \
-                MMWavTab_get(((spsp)->samples),__x0), \
-                MMWavTab_get(((spsp)->samples),__x1), \
-                (spsp)->index - (int)((spsp)->index));\
-    } while (0)
+    MMWavTab_get_interpLinear_q_32_32_((spsp)->samples,pdest,(spsp)->index)
 
 #define MMSamplePlayerSigProc_getSampleInterpLinear_sum_(spsp,pdest) \
-    do { \
-        int __x0 = (int)(spsp)->index; \
-        int __x1 = MM_wrap((int)(spsp)->index + 1, 0,  \
-                (int)MMArray_get_length(spsp->samples)); \
-        *(pdest) += MM_f_interp_linear_msp_( \
-                MMWavTab_get(((spsp)->samples),__x0), \
-                MMWavTab_get(((spsp)->samples),__x1), \
-                (spsp)->index - (int)((spsp)->index));\
-    } while (0)
+    MMWavTab_get_interpLinear_q_32_32_sum_((spsp)->samples,pdest,(spsp)->index)
     
 /* This is slow and sucks */
 #define MMSamplePlayerSigProc_getSampleInterpCubic_(spsp,pdest) \
@@ -163,40 +160,10 @@ void MMSamplePlayer_init(MMSamplePlayer *sp);
 
 /* Uses Miller Puckette's cubic interpolation */
 #define MMSamplePlayerSigProc_getSampleInterpCubicMsp_(spsp,pdest) \
-    do { \
-        int __x0 = MM_wrap((int)(spsp)->index - 1, 0, \
-                (int)MMArray_get_length(spsp->samples)); \
-        int __x1 = MM_wrap((int)(spsp)->index    , 0,  \
-                (int)MMArray_get_length(spsp->samples)); \
-        int __x2 = MM_wrap((int)(spsp)->index + 1, 0,  \
-                (int)MMArray_get_length(spsp->samples)); \
-        int __x3 = MM_wrap((int)(spsp)->index + 2, 0, \
-                (int)MMArray_get_length(spsp->samples)); \
-        MMSample __y0 = MMWavTab_get(((spsp)->samples),__x0); \
-        MMSample __y1 = MMWavTab_get(((spsp)->samples),__x1); \
-        MMSample __y2 = MMWavTab_get(((spsp)->samples),__x2); \
-        MMSample __y3 = MMWavTab_get(((spsp)->samples),__x3); \
-        *(pdest) = MM_f_interp_cubic_msp_(__y0, __y1, __y2, __y3, \
-                (spsp)->index - (int)((spsp)->index)); \
-    } while (0)
+    MMWavTab_get_interpCubic_flt_((spsp)->samples,pdest,(spsp)->index)
 
 /* Uses Miller Puckette's cubic interpolation */
 #define MMSamplePlayerSigProc_getSampleInterpCubicMsp_sum_(spsp,pdest) \
-    do { \
-        int __x0 = MM_wrap((int)(spsp)->index - 1, 0, \
-                (int)MMArray_get_length(spsp->samples)); \
-        int __x1 = MM_wrap((int)(spsp)->index    , 0,  \
-                (int)MMArray_get_length(spsp->samples)); \
-        int __x2 = MM_wrap((int)(spsp)->index + 1, 0,  \
-                (int)MMArray_get_length(spsp->samples)); \
-        int __x3 = MM_wrap((int)(spsp)->index + 2, 0, \
-                (int)MMArray_get_length(spsp->samples)); \
-        MMSample __y0 = MMWavTab_get(((spsp)->samples),__x0); \
-        MMSample __y1 = MMWavTab_get(((spsp)->samples),__x1); \
-        MMSample __y2 = MMWavTab_get(((spsp)->samples),__x2); \
-        MMSample __y3 = MMWavTab_get(((spsp)->samples),__x3); \
-        *(pdest) += MM_f_interp_cubic_msp_(__y0, __y1, __y2, __y3, \
-                (spsp)->index - (int)((spsp)->index)); \
-    } while (0)
+    MMWavTab_get_interpCubic_flt_sum_((spsp)->samples,pdest,(spsp)->index)
 
 #endif /* MM_SAMPLEPLAYER_H */

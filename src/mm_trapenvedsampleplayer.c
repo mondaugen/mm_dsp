@@ -28,8 +28,9 @@ void MMTrapEnvedSamplePlayer_noteOn(
     MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).interp = interpolation;
     MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).index = index;
     MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).note = note;
-    MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).rate = 
-        MMCC_MIDItoRate(note) / MMWavTab_get_freq(samples);
+    MMSamplePlayerSigProc_setRate_flt_(
+            &(MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp)), 
+        MMCC_MIDItoRate(note) / MMWavTab_get_freq(samples));
     MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).loop = loop;
     MMSigProc_setState(&MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp),
                         MMSigProc_State_PLAYING);
@@ -56,7 +57,8 @@ void MMTrapEnvedSamplePlayer_noteOn_Rate(
     MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).interp = interpolation;
     MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).index = index;
     MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).note = note;
-    MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).rate = rate;
+    MMSamplePlayerSigProc_setRate_flt_(
+            &(MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp)),rate);
     MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).loop = loop;
     MMSigProc_setState(&MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp),
                         MMSigProc_State_PLAYING);
