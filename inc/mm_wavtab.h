@@ -114,4 +114,41 @@ struct __MMWavTab {
                 (index) - (int)(index)); \
     } while (0)
 
+/* Get a value at a fractional index using a uint64_t where the 32 MSB are the
+ * integer part and the 32 LSB are the fractional part. This is the recommended
+ * method. This method is not correct if "index" is negative. */
+#define MMWavTab_get_interpCubic_q_32_32_(wavtab,pdest,index) \
+    do { \
+        int __x1 = (index >> 32); \
+        int __x0 = MM_wrap(__x1 - 1, 0,  \
+                (int)MMArray_get_length((wavtab))); \
+        int __x2 = MM_wrap(__x1 + 1, 0,  \
+                (int)MMArray_get_length((wavtab))); \
+        int __x3 = MM_wrap(__x1 + 2, 0,  \
+                (int)MMArray_get_length((wavtab))); \
+        MMSample __y0 = MMWavTab_get((wavtab),__x0); \
+        MMSample __y1 = MMWavTab_get((wavtab),__x1); \
+        MMSample __y2 = MMWavTab_get((wavtab),__x2); \
+        MMSample __y3 = MMWavTab_get((wavtab),__x3); \
+        *(pdest) = MM_f_interp_cubic_msp_(__y0, __y1, __y2, __y3, \
+                (((MMSample)(0xffffffff & (index)))/(1l << 32))); \
+    } while (0)
+
+#define MMWavTab_get_interpCubic_q_32_32_sum_(wavtab,pdest,index) \
+    do { \
+        int __x1 = (index >> 32); \
+        int __x0 = MM_wrap(__x1 - 1, 0,  \
+                (int)MMArray_get_length((wavtab))); \
+        int __x2 = MM_wrap(__x1 + 1, 0,  \
+                (int)MMArray_get_length((wavtab))); \
+        int __x3 = MM_wrap(__x1 + 2, 0,  \
+                (int)MMArray_get_length((wavtab))); \
+        MMSample __y0 = MMWavTab_get((wavtab),__x0); \
+        MMSample __y1 = MMWavTab_get((wavtab),__x1); \
+        MMSample __y2 = MMWavTab_get((wavtab),__x2); \
+        MMSample __y3 = MMWavTab_get((wavtab),__x3); \
+        *(pdest) += MM_f_interp_cubic_msp_(__y0, __y1, __y2, __y3, \
+                (((MMSample)(0xffffffff & (index)))/(1l << 32))); \
+    } while (0)
+
 #endif /* MM_WAVTAB_H */

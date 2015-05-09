@@ -38,9 +38,12 @@ static void MMSamplePlayerSigProc_tick_sum(MMSigProc *sp)
         }
         spsp->index += spsp->rate;
         if (spsp->loop) {
-            spsp->index = MM_fwrap(spsp->index, 0,
-                    MMArray_get_length(spsp->samples));
-        } else if ((spsp->index >= MMArray_get_length(spsp->samples))
+            spsp->index = MM_wrapl(spsp->index, 0,
+                    ((MMSamplePlayerQ_t)MMArray_get_length(spsp->samples)) 
+                        << MMSAMPLEPLAYER_Q_WIDTH_FRAC);
+        } else if ((spsp->index 
+                    >= (((MMSamplePlayerQ_t)MMArray_get_length(spsp->samples)) 
+                        << MMSAMPLEPLAYER_Q_WIDTH_FRAC))
                 || (spsp->index < 0)) {
             MMSigProc_setState(spsp,MMSigProc_State_DONE);
             i = (spsp->parent->outBus->size * spsp->parent->outBus->channels);
@@ -54,16 +57,24 @@ static void MMSamplePlayerSigProc_tick_sum(MMSigProc *sp)
 }
 
 /* Writes a sample according to lookup speed and wavetable into the busses of
- * the sample player. No interpolation for now. */
+ * the sample player. */
+/* THIS DOESN'T WORK */
 static void MMSamplePlayerSigProc_tick_no_sum(MMSigProc *sp)
 {
     /* Call superclass tick method */
     MMSigProc_defaultTick(sp);
+    size_t i;
+    MMSamplePlayerSigProc *spsp = (MMSamplePlayerSigProc*)sp;
     if (MMSigProc_getState(sp) == MMSigProc_State_DONE) {
+        /* Write 0 to the rest of the vector */
+        i = 0;
+        while (i < (spsp->parent->outBus->size 
+                    * spsp->parent->outBus->channels)) {
+            *(spsp->parent->outBus->data + i) = 0;
+            i += spsp->parent->outBus->channels;
+        }
         return;
     }
-    MMSamplePlayerSigProc *spsp = (MMSamplePlayerSigProc*)sp;
-    size_t i;
     for (i = 0; 
          i < (spsp->parent->outBus->size * spsp->parent->outBus->channels);
          i += spsp->parent->outBus->channels) {
@@ -97,7 +108,12 @@ static void MMSamplePlayerSigProc_tick_no_sum(MMSigProc *sp)
                         << MMSAMPLEPLAYER_Q_WIDTH_FRAC))
                 || (spsp->index < 0)) {
             MMSigProc_setState(spsp,MMSigProc_State_DONE);
-            i = (spsp->parent->outBus->size * spsp->parent->outBus->channels);
+            /* Write 0 to the rest of the vector */
+            while (i < (spsp->parent->outBus->size 
+                        * spsp->parent->outBus->channels)) {
+                *(spsp->parent->outBus->data + i) = 0;
+                i += spsp->parent->outBus->channels;
+            }
         }
     }
     /* we handle the doneAction */
@@ -113,7 +129,8 @@ MMSamplePlayerSigProc *MMSamplePlayerSigProc_new(void)
     return (MMSamplePlayerSigProc*)malloc(sizeof(MMSamplePlayerSigProc));
 }
 
-void MMSamplePlayerSigProc_init(MMSamplePlayerSigProc *spsp, MMSamplePlayerTickType tt)
+void MMSamplePlayerSigProc_init(MMSamplePlayerSigProc *spsp,
+        MMSamplePlayerTickType tt)
 {
     memset(spsp,0,sizeof(MMSamplePlayerSigProc));
     MMSigProc_init((MMSigProc*)spsp);
@@ -134,3 +151,15 @@ void MMSamplePlayer_init(MMSamplePlayer *sp)
     memset(sp,0,sizeof(MMSamplePlayer));
     MMSigProc_init(&sp->placeHolder);
 }
+
+void MMSamplePlayerSigProc_setTickType(MMSamplePlayerSigProc *spsp,
+        MMSamplePlayerTickType tt)
+{
+    switch (tt) {
+        case MMSamplePlayerTickType_SUM:
+            MMSigProc_setTick(spsp,MMSamplePlayerSigProc_tick_sum);
+        case MMSamplePlayerTickType_NOSUM:
+            MMSigProc_setTick(spsp,MMSamplePlayerSigProc_tick_no_sum);
+    }
+}
+

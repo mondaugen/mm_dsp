@@ -52,8 +52,11 @@ typedef enum {
 
 MMSamplePlayerSigProc *MMSamplePlayerSigProc_new(void);
 MMSamplePlayer *MMSamplePlayer_new(void);
-void MMSamplePlayerSigProc_init(MMSamplePlayerSigProc *spsp, MMSamplePlayerTickType tt);
+void MMSamplePlayerSigProc_init(MMSamplePlayerSigProc *spsp, 
+        MMSamplePlayerTickType tt);
 void MMSamplePlayer_init(MMSamplePlayer *sp);
+void MMSamplePlayerSigProc_setTickType(MMSamplePlayerSigProc *spsp,
+        MMSamplePlayerTickType tt);
 
 /* Set the rate, which is a Q type, using a float */
 #define MMSamplePlayerSigProc_setRate_flt_(spsp,f) \
@@ -160,10 +163,10 @@ void MMSamplePlayer_init(MMSamplePlayer *sp);
 
 /* Uses Miller Puckette's cubic interpolation */
 #define MMSamplePlayerSigProc_getSampleInterpCubicMsp_(spsp,pdest) \
-    MMWavTab_get_interpCubic_flt_((spsp)->samples,pdest,(spsp)->index)
+    MMWavTab_get_interpCubic_q_32_32_((spsp)->samples,pdest,(spsp)->index)
 
 /* Uses Miller Puckette's cubic interpolation */
 #define MMSamplePlayerSigProc_getSampleInterpCubicMsp_sum_(spsp,pdest) \
-    MMWavTab_get_interpCubic_flt_sum_((spsp)->samples,pdest,(spsp)->index)
+    MMWavTab_get_interpCubic_q_32_32_sum_((spsp)->samples,pdest,(spsp)->index)
 
 #endif /* MM_SAMPLEPLAYER_H */
