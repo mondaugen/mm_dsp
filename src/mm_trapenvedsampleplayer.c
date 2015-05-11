@@ -26,7 +26,8 @@ void MMTrapEnvedSamplePlayer_noteOn(
         MMBool          loop)
 {
     MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).interp = interpolation;
-    MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).index = index;
+    MMSamplePlayerSigProc_setIndex_flt_(
+            &(MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp)),index);
     MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).note = note;
     MMSamplePlayerSigProc_setRate_flt_(
             &(MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp)), 
@@ -55,7 +56,8 @@ void MMTrapEnvedSamplePlayer_noteOn_Rate(
         MMSample        rate)
 {
     MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).interp = interpolation;
-    MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).index = index;
+    MMSamplePlayerSigProc_setIndex_flt_(
+            &(MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp)),index);
     MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).note = note;
     MMSamplePlayerSigProc_setRate_flt_(
             &(MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp)),rate);

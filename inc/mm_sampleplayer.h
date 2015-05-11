@@ -63,6 +63,11 @@ void MMSamplePlayerSigProc_setTickType(MMSamplePlayerSigProc *spsp,
     (spsp)->rate = (MMSamplePlayerQ_t)(f \
             * ((float)(1l << MMSAMPLEPLAYER_Q_WIDTH_FRAC)));
 
+/* Set the index, which is a Q type, using a float */
+#define MMSamplePlayerSigProc_setIndex_flt_(spsp,f) \
+    (spsp)->index = (MMSamplePlayerQ_t)(f \
+            * ((float)(1l << MMSAMPLEPLAYER_Q_WIDTH_FRAC)));
+
 /* Functions for getting samples with various interpolations */
 /* spsp is a pointer to a MMSamplePlayerSigProc and pdest is a pointer to an
  * MMSample */
