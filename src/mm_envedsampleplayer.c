@@ -45,7 +45,7 @@ void MMEnvedSamplePlayer_init(MMEnvedSamplePlayer *esp, MMEnvelope *env, MMBus *
     /* Add sample player placeholder to top of internal sig chain */
     MMSigProc_insertAfter(&esp->sigChain.sigProcs, &esp->sp.placeHolder);
     /* Init sample player sig proc */
-    MMSamplePlayerSigProc_init(&esp->spsp, MMSamplePlayerTickType_NOSUM);
+    MMSamplePlayerSigProc_init(&esp->spsp, MMSamplePlayerTickType_SUM);
     esp->spsp.parent = &esp->sp;
     MMSigProc_setState((&esp->spsp),MMSigProc_State_DONE);
     /* Insert at sampleplayer place holder */
