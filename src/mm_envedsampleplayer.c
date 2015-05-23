@@ -51,6 +51,10 @@ void MMEnvedSamplePlayer_init(MMEnvedSamplePlayer *esp, MMEnvelope *env, MMBus *
     /* Insert at sampleplayer place holder */
     MMSigProc_insertAfter(&esp->sp.placeHolder, &esp->spsp);
     MMSigProc_setTick(esp, MMEnvedSamplePlayer_tick);
+    /* Initialize the sigConst that zeros the bus */
+    MMSigConst_init(&esp->sigConst, esp->internalBus, 0, MMSigConst_doSum_FALSE);
+    /* Insert at the top of the internal sig chain */
+    MMSigProc_insertAfter(&esp->sigChain.sigProcs, &esp->sigConst);
     /* Set default on done action */
     esp->onDone = NULL;
     esp->onDoneParams = NULL;

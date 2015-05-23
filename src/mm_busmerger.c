@@ -20,7 +20,7 @@ static void MMBusMerger_tick(MMSigProc *sp)
  * If the sourceBus has a smaller number of channels than the destBus the n
  * channels of the sourceBus are written to the first n channels of the destBus.
  * If the sourceBus has a greater number of channels than the destBus then the
- * first m channels of the sourceBus are written to the channels of the destBus.
+ * first m channels of the sourceBus are written to the m channels of the destBus.
  *
  * Both the sourceBus and the destBus must have the same size. 
  *
