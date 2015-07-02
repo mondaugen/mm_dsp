@@ -10,14 +10,14 @@ MMDSP_OBJS      = $(MMDSP_SRCS:$(MMDSP_SRCS_PATH)/%.c=objs/%.o)
 # this includes the dependencies of external libraries
 MMDSP_DEP       = $(wildcard $(MMDSP_INC_PATH)/*.h)
 MMDSP_DEP	   += $(wildcard $(MMPRIMITIVES_INC_PATH)/*.h)
-MMDSP_CFLAGS	= -Ofast
+MMDSP_CFLAGS	= -Os
 
 INC		= $(MMDSP_INC_PATH) $(MMPRIMITIVES_INC_PATH)
 CFLAGS	= $(foreach inc,$(INC),-I$(inc))
 
-CFLAGS += -ggdb3 -gdwarf-4 -Wall -ffunction-sections -fdata-sections
+CFLAGS += -gdwarf-4 -Wall -ffunction-sections -fdata-sections
 CFLAGS += -mlittle-endian -mthumb -mcpu=cortex-m4 -mthumb-interwork
-CFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16 -O0 -dD
+CFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16 -dD
 CFLAGS += -Wno-unused-function
 
 ARFLAGS   = rcs
