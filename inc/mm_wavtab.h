@@ -3,6 +3,7 @@
 #include "mm_array.h" 
 #include "mm_sample.h" 
 #include "mm_interp.h" 
+#include "mm_wrap.h" 
 #include <stdint.h> 
 
 /* Just the same as an MMArray, but must contain Sample type only! */
