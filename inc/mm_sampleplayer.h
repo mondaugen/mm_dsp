@@ -14,9 +14,9 @@
 /* The fixed-precision type */
 typedef int64_t MMSamplePlayerQ_t;
 /* The number of integer bits of this type */
-#define MMSAMPLEPLAYER_Q_WIDTH_INT 32
+#define MMSAMPLEPLAYER_Q_WIDTH_INT 32ll
 /* The number of fraction bits of this type */
-#define MMSAMPLEPLAYER_Q_WIDTH_FRAC 32 
+#define MMSAMPLEPLAYER_Q_WIDTH_FRAC 32ll 
 
 typedef struct __MMSamplePlayer MMSamplePlayer;
 
@@ -60,13 +60,13 @@ void MMSamplePlayerSigProc_setTickType(MMSamplePlayerSigProc *spsp,
 
 /* Set the rate, which is a Q type, using a float */
 #define MMSamplePlayerSigProc_setRate_flt_(spsp,f) \
-    (spsp)->rate = (MMSamplePlayerQ_t)(f \
-            * ((float)(1l << MMSAMPLEPLAYER_Q_WIDTH_FRAC)));
+    (spsp)->rate = (MMSamplePlayerQ_t)((float)(f) \
+            * ((float)(1ll << MMSAMPLEPLAYER_Q_WIDTH_FRAC)))
 
 /* Set the index, which is a Q type, using a float */
 #define MMSamplePlayerSigProc_setIndex_flt_(spsp,f) \
-    (spsp)->index = (MMSamplePlayerQ_t)(f \
-            * ((float)(1l << MMSAMPLEPLAYER_Q_WIDTH_FRAC)));
+    (spsp)->index = (MMSamplePlayerQ_t)((float)(f) \
+            * ((float)(1ll << MMSAMPLEPLAYER_Q_WIDTH_FRAC)))
 
 /* Functions for getting samples with various interpolations */
 /* spsp is a pointer to a MMSamplePlayerSigProc and pdest is a pointer to an

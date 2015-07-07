@@ -60,7 +60,7 @@ struct __MMWavTab {
         *(pdest) = MM_f_interp_linear_msp_( \
                 MMWavTab_get((wavtab),__x0), \
                 MMWavTab_get((wavtab),__x1), \
-                (((MMSample)(0xffffffff & (index)))/(1l << 32)));\
+                (((MMSample)(0xffffffff & (index)))/(1ll << 32ll)));\
     } while (0)
 
 /* Same as above but sums into the variable *pdest */
@@ -72,7 +72,7 @@ struct __MMWavTab {
         *(pdest) += MM_f_interp_linear_msp_( \
                 MMWavTab_get((wavtab),__x0), \
                 MMWavTab_get((wavtab),__x1), \
-                (((MMSample)(0xffffffff & (index)))/(1l << 32)));\
+                (((MMSample)(0xffffffff & (index)))/(1ll << 32ll)));\
     } while (0)
 
 
@@ -132,7 +132,7 @@ struct __MMWavTab {
         MMSample __y2 = MMWavTab_get((wavtab),__x2); \
         MMSample __y3 = MMWavTab_get((wavtab),__x3); \
         *(pdest) = MM_f_interp_cubic_msp_(__y0, __y1, __y2, __y3, \
-                (((MMSample)(0xffffffff & (index)))/(1l << 32))); \
+                (((MMSample)(0xffffffff & (index)))/(1ll << 32ll))); \
     } while (0)
 
 #define MMWavTab_get_interpCubic_q_32_32_sum_(wavtab,pdest,index) \
@@ -149,7 +149,7 @@ struct __MMWavTab {
         MMSample __y2 = MMWavTab_get((wavtab),__x2); \
         MMSample __y3 = MMWavTab_get((wavtab),__x3); \
         *(pdest) += MM_f_interp_cubic_msp_(__y0, __y1, __y2, __y3, \
-                (((MMSample)(0xffffffff & (index)))/(1l << 32))); \
+                (((MMSample)(0xffffffff & (index)))/(1ll << 32ll))); \
     } while (0)
 
 #endif /* MM_WAVTAB_H */

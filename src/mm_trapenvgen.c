@@ -10,7 +10,7 @@ void MMTrapEnvGen_tick(MMSigProc *teg)
             i += MMEnvGen_getBus(teg)->channels) {
         MMEnvGen_getBus(teg)->data[i] = 
             MMTrapezoidEnv_getCurValue_FAST(&((MMTrapEnvGen*)teg)->te);
-        MMTrapezoidEnv_incTime_FAST(&((MMTrapEnvGen*)teg)->te,
+        MMTrapezoidEnv_incTime_FAST((MMEnvelope*)&((MMTrapEnvGen*)teg)->te,
                 MMEnvGen_getDeltaTime(teg));
     }
 }
