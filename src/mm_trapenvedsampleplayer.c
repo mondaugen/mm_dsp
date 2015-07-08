@@ -1,42 +1,42 @@
 #include "mm_trapenvedsampleplayer.h" 
 #include "mm_common_calcs.h" 
 
-void MMTrapEnvedSamplePlayer_init(MMTrapEnvedSamplePlayer *tesp, MMBus *outBus,
-        size_t internalBusSize, MMSample tickPeriod)
+/* The env field of the init struct will be replaced with a pointer to the
+ * TrapEnvedSamplePlayer's envelope (a trapezoidal envelope, duh).
+ * The rest of the fields of the init struct, including the fields of it's base
+ * classe(s) need to be provided. */
+void MMTrapEnvedSamplePlayer_init(MMTrapEnvedSamplePlayer *tesp,    
+                                  MMTrapEnvedSamplePlayerInitStruct *init)
 {
-    MMEnvedSamplePlayer_init((MMEnvedSamplePlayer*)tesp, (MMEnvelope*)&tesp->teg.te,
-            outBus, internalBusSize);
+    ((MMEnvedSamplePlayerInitStruct*)init)->env = (MMEnvelope*)&tesp->teg.te;
+    MMEnvedSamplePlayer_init((MMEnvedSamplePlayer*)tesp,
+            (MMEnvedSamplePlayerInitStruct*)init);
     /* Trapezoid envelope needs to be initialized, but its parameters can later
      * be changed, we just put some arbitrary ones for now */
-    MMTrapEnvGen_init(&tesp->teg, ((MMEnvedSamplePlayer*)tesp)->envBus,
-                        tickPeriod, 0, 1, 1, 1,-1);
+    MMTrapEnvGen_init(&tesp->teg,((MMEnvedSamplePlayer*)tesp)->envBus,
+                        init->tickPeriod, 0, 1, 1, 1,-1);
     MMEnvedSamplePlayer_insertEnvGen(tesp,&tesp->teg);
 }
 
 void MMTrapEnvedSamplePlayer_noteOn(
-        MMTrapEnvedSamplePlayer *tesp,
-        MMSample        note,
-        MMSample        amplitude,
-        MMInterpMethod  interpolation,
-        MMSample        index,
-        MMSample        attackTime,
-        MMSample        releaseTime,
-        MMSample        sustainTime,
-        MMWavTab        *samples,
-        MMBool          loop)
+        MMTrapEnvedSamplePlayer *tesp, 
+        MMTrapEnvedSamplePlayer_noteOnStruct *init)
 {
-    MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).interp = interpolation;
     MMSamplePlayerSigProc_setIndex_flt_(
-            &(MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp)),index);
-    MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).note = note;
+            &(MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp)),
+            init->index);
+    MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).note = init->note;
     MMSamplePlayerSigProc_setRate_flt_(
             &(MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp)), 
-        MMCC_MIDItoRate(note) / MMWavTab_get_freq(samples));
-    MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).loop = loop;
-    MMSigProc_setState(&MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp),
-                        MMSigProc_State_PLAYING);
-    MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).samples = samples;
-    MMTrapezoidEnv_setEnvParams(&tesp->teg.te,0, amplitude, attackTime, releaseTime,sustainTime);
+            MMCC_MIDItoRate(init->note) / MMWavTab_get_freq(init->samples));
+    MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).samples =
+        init->samples;
+    MMTrapezoidEnv_setEnvParams(&tesp->teg.te,
+                                0,
+                                init->amplitude,
+                                init->attackTime,
+                                init->releaseTime,
+                                init->sustainTime);
     MMEnvelope_startAttack(&MMTrapEnvedSamplePlayer_getTrapezoidEnv(tesp));
 }
 
@@ -44,27 +44,23 @@ void MMTrapEnvedSamplePlayer_noteOn(
  * note to keep track of the voice */
 void MMTrapEnvedSamplePlayer_noteOn_Rate(
         MMTrapEnvedSamplePlayer *tesp,
-        MMSample        note,
-        MMSample        amplitude,
-        MMInterpMethod  interpolation,
-        MMSample        index,
-        MMSample        attackTime,
-        MMSample        releaseTime,
-        MMSample        sustainTime,
-        MMWavTab        *samples,
-        MMBool          loop,
-        MMSample        rate)
+        MMTrapEnvedSamplePlayer_noteOnStruct *init)
 {
-    MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).interp = interpolation;
     MMSamplePlayerSigProc_setIndex_flt_(
-            &(MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp)),index);
-    MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).note = note;
+            &(MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp)),
+            init->index);
+    MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).note =
+        init->note;
     MMSamplePlayerSigProc_setRate_flt_(
-            &(MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp)),rate);
-    MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).loop = loop;
-    MMSigProc_setState(&MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp),
-                        MMSigProc_State_PLAYING);
-    MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).samples = samples;
-    MMTrapezoidEnv_setEnvParams(&tesp->teg.te,0, amplitude, attackTime, releaseTime, sustainTime);
+            &(MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp)),
+            init->rate);
+    MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).samples = 
+        init->samples;
+    MMTrapezoidEnv_setEnvParams(&tesp->teg.te,
+                                0,
+                                init->amplitude,
+                                init->attackTime,
+                                init->releaseTime,
+                                init->sustainTime);
     MMEnvelope_startAttack(&MMTrapEnvedSamplePlayer_getTrapezoidEnv(tesp));
 }

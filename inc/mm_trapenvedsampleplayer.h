@@ -13,34 +13,34 @@ struct __MMTrapEnvedSamplePlayer {
     MMTrapEnvGen        teg;
 };
 
-void MMTrapEnvedSamplePlayer_init(MMTrapEnvedSamplePlayer *tesp, MMBus *outBus,
-        size_t internalBusSize, MMSample tickPeriod);
+typedef struct __MMTrapEnvedSamplePlayerInitStruct {
+    MMEnvedSamplePlayerInitStruct head;
+    MMSample tickPeriod;
+} MMTrapEnvedSamplePlayerInitStruct;
+
+void MMTrapEnvedSamplePlayer_init(MMTrapEnvedSamplePlayer *tesp,    
+                                  MMTrapEnvedSamplePlayerInitStruct *init);
+
+typedef struct __MMTrapEnvedSamplePlayer_noteOnStruct {
+        MMSample        note;
+        MMSample        amplitude;
+        MMSample        index;
+        MMSample        attackTime;
+        MMSample        releaseTime;
+        MMSample        sustainTime;
+        MMWavTab        *samples;
+        MMSample        rate;
+} MMTrapEnvedSamplePlayer_noteOnStruct;
 
 void MMTrapEnvedSamplePlayer_noteOn(
         MMTrapEnvedSamplePlayer *tesp,
-        MMSample        note,
-        MMSample        amplitude,
-        MMInterpMethod  interpolation,
-        MMSample        index,
-        MMSample        attackTime,
-        MMSample        releaseTime,
-        MMSample        sustainTime,
-        MMWavTab        *samples,
-        MMBool          loop);
+        MMTrapEnvedSamplePlayer_noteOnStruct *init);
 
 void MMTrapEnvedSamplePlayer_noteOn_Rate(
         MMTrapEnvedSamplePlayer *tesp,
-        MMSample        note,
-        MMSample        amplitude,
-        MMInterpMethod  interpolation,
-        MMSample        index,
-        MMSample        attackTime,
-        MMSample        releaseTime,
-        MMSample        sustainTime,
-        MMWavTab        *samples,
-        MMBool          loop,
-        MMSample        rate);
+        MMTrapEnvedSamplePlayer_noteOnStruct *init);
 
-#define MMTrapEnvedSamplePlayer_getTrapezoidEnv(tesp) ((MMTrapEnvedSamplePlayer*)(tesp))->teg.te
+#define MMTrapEnvedSamplePlayer_getTrapezoidEnv(tesp)\
+    ((MMTrapEnvedSamplePlayer*)(tesp))->teg.te
 
 #endif /* MM_TRAPENVEDSAMPLEPLAYER_H */

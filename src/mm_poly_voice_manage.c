@@ -1,5 +1,8 @@
 #include "mm_poly_voice_manage.h"
 #include <stdlib.h> 
+#ifdef MM_DSP_DEBUG
+ #include <assert.h>
+#endif  
 
 /* Handle allocation of polyphonic notes. */
 
@@ -100,7 +103,13 @@ void MMPolyManager_noteOff(MMPolyManager *pm, MMPolyVoiceParams *params)
 MMPolyManager *MMPolyManager_new(size_t numVoices)
 {
     MMPolyManager *result = (MMPolyManager*)malloc(sizeof(MMPolyManager));
+#ifdef MM_DSP_DEBUG
+    assert(result);
+#endif  
     result->voices = (MMPolyVoice**)malloc(sizeof(MMPolyVoice*) * numVoices);
+#ifdef MM_DSP_DEBUG
+    assert(result->voices);
+#endif  
     result->numVoices = numVoices;
     MMPolyVoice_init(&result->playingVoices);
     return result;

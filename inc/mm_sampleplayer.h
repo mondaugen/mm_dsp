@@ -12,11 +12,11 @@
 #include <stdint.h> 
 
 /* The fixed-precision type */
-typedef int64_t MMSamplePlayerQ_t;
+typedef int32_t MMSamplePlayerQ_t;
 /* The number of integer bits of this type */
-#define MMSAMPLEPLAYER_Q_WIDTH_INT 32ll
+#define MMSAMPLEPLAYER_Q_WIDTH_INT 24L
 /* The number of fraction bits of this type */
-#define MMSAMPLEPLAYER_Q_WIDTH_FRAC 32ll 
+#define MMSAMPLEPLAYER_Q_WIDTH_FRAC 8L
 
 typedef struct __MMSamplePlayerSigProc MMSamplePlayerSigProc;
 
@@ -31,7 +31,6 @@ struct __MMSamplePlayerSigProc {
                                be modulated so we need something static to
                                compare to check if a particular note is sounding
                                */
-    MMSamplePlayer *parent; /* where it gets its placeHolder and outBusses from */
     MMInterpMethod  interp;
 };
 
@@ -52,22 +51,18 @@ struct __MMSamplePlayerSigProcInitStruct {
 #define MMSamplePlayerSigProc_free(spsp) free(spsp) 
 
 MMSamplePlayerSigProc *MMSamplePlayerSigProc_new(void);
-MMSamplePlayer *MMSamplePlayer_new(void);
-void MMSamplePlayerSigProc_init(MMSamplePlayerSigProc *spsp, 
-        MMSamplePlayerTickType tt);
-void MMSamplePlayer_init(MMSamplePlayer *sp);
-void MMSamplePlayerSigProc_setTickType(MMSamplePlayerSigProc *spsp,
-        MMSamplePlayerTickType tt);
+void MMSamplePlayerSigProc_init(MMSamplePlayerSigProc *sp,
+        MMSamplePlayerSigProcInitStruct *init);
 
 /* Set the rate, which is a Q type, using a float */
 #define MMSamplePlayerSigProc_setRate_flt_(spsp,f) \
     (spsp)->rate = (MMSamplePlayerQ_t)((float)(f) \
-            * ((float)(1ll << MMSAMPLEPLAYER_Q_WIDTH_FRAC)))
+            * ((float)(1 << MMSAMPLEPLAYER_Q_WIDTH_FRAC)))
 
 /* Set the index, which is a Q type, using a float */
 #define MMSamplePlayerSigProc_setIndex_flt_(spsp,f) \
     (spsp)->index = (MMSamplePlayerQ_t)((float)(f) \
-            * ((float)(1ll << MMSAMPLEPLAYER_Q_WIDTH_FRAC)))
+            * ((float)(1 << MMSAMPLEPLAYER_Q_WIDTH_FRAC)))
 
 /* Functions for getting samples with various interpolations */
 /* spsp is a pointer to a MMSamplePlayerSigProc and pdest is a pointer to an

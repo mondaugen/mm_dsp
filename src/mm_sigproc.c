@@ -1,6 +1,9 @@
 #include <stdlib.h> 
 #include <string.h> 
 #include "mm_sigproc.h" 
+#ifdef MM_DSP_DEBUG
+ #include <assert.h>
+#endif  
 
 void MMSigProc_defaultTick(MMSigProc *sp)
 {
@@ -23,5 +26,10 @@ void MMSigProc_init(MMSigProc *sp)
 
 MMSigProc *MMSigProc_new(void)
 {
-    return (MMSigProc*)malloc(sizeof(MMSigProc));
+    MMSigProc * result;
+    result = (MMSigProc*)malloc(sizeof(MMSigProc));
+#ifdef MM_DSP_DEBUG
+    assert(result);
+#endif  
+    return result;
 }

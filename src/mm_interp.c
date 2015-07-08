@@ -1,3 +1,5 @@
+#include "mm_interp.h" 
+
 /* Get len_y_ values by looking up in y which is a table of length len_y. The
  * results are put in y_. idx0 is a pointer to a starting index which will be
  * incremented at the rate. Both idx0 and rate are in Q_24_8 format, that means

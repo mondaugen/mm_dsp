@@ -34,15 +34,7 @@ struct __MMPvtespParams {
     MMPolyVoiceParams   head;
     MMPvtespParamType   paramType;
     MMPvtespRateSource  rateSource;
-    MMSample            rate;
-    MMSample            note;
-    MMSample            amplitude;
-    MMInterpMethod      interpolation;
-    MMSample            index;
-    MMSample            attackTime;
-    MMSample            releaseTime;
-    MMWavTab            *samples;
-    MMBool              loop;
+    MMTrapEnvedSamplePlayer_noteOnStruct noteOnParams;
 };
 
 MMPvtesp *MMPvtesp_new(MMTrapEnvedSamplePlayer *tesp);

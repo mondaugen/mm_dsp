@@ -1,4 +1,5 @@
 OPTIMIZE=-Ofast
+DEBUG_FLAGS=-DMM_DSP_DEBUG -ggdb3
 # requires mm_primitives library
 # assumes it is contained in the parent directory
 MMPRIMITIVES_PATH = ../mm_primitives
@@ -16,7 +17,7 @@ MMDSP_CFLAGS	= $(OPTIMIZE)
 INC		= $(MMDSP_INC_PATH) $(MMPRIMITIVES_INC_PATH)
 CFLAGS	= $(foreach inc,$(INC),-I$(inc))
 
-CFLAGS += -ggdb3 -Wall -ffunction-sections -fdata-sections
+CFLAGS += $(DEBUG_FLAGS) -Wall -ffunction-sections -fdata-sections
 CFLAGS += -mlittle-endian -mthumb -mcpu=cortex-m4
 CFLAGS += -mthumb-interwork -mfloat-abi=hard -mfpu=fpv4-sp-d16
 CFLAGS += -dD --specs=nano.specs

@@ -29,12 +29,13 @@ void MMTrapezoidEnv_init(MMTrapezoidEnv *te,
 
 void MMTrapezoidEnv_startRelease(MMEnvelope *te);
 
-#define MMTrapezoidEnv_setEnvParams(te,_min,_max,_attackTime,_releaseTime,_sustainTime)\
+#define MMTrapezoidEnv_setEnvParams(te,_min,_max,_attackTime,_releaseTime,\
+        _sustainTime)\
     MMTrapezoidEnv_get(te)->min = _min;\
     MMTrapezoidEnv_get(te)->max = _max;\
     MMTrapezoidEnv_get(te)->attackTime = _attackTime;\
     MMTrapezoidEnv_get(te)->releaseTime = _releaseTime;\
-    MMTrapezoidEnv_get(te)->sustainTime = _sustainTime;
+    MMTrapezoidEnv_get(te)->sustainTime = _sustainTime
 
 #define MMTrapezoidEnv_get(te) ((MMTrapezoidEnv *)te) 
 
@@ -54,16 +55,18 @@ void MMTrapezoidEnv_startRelease(MMEnvelope *te);
         }\
         MMEnvelope_get_time(te) += deltaTime;\
         if ((MMEnvelope_getState(te) == MMTrapezoidEnvState_ATTACK)\
-                && (MMEnvelope_get_time(te) >= MMTrapezoidEnv_get(te)->attackTime)) {\
-            MMLineFunc2D_set_mb(&MMTrapezoidEnv_get(te)->lf, 0, MMTrapezoidEnv_get(te)->max);\
+            && (MMEnvelope_get_time(te) >= MMTrapezoidEnv_get(te)->attackTime)) {\
+            MMLineFunc2D_set_mb(&MMTrapezoidEnv_get(te)->lf, 0,\
+                    MMTrapezoidEnv_get(te)->max);\
             MMEnvelope_getState(te) = MMTrapezoidEnvState_SUSTAIN;\
             MMEnvelope_get_time(te) = 0;\
         } else if ((MMEnvelope_getState(te) == MMTrapezoidEnvState_SUSTAIN)\
-                && (MMEnvelope_get_time(te) >= MMTrapezoidEnv_get(te)->sustainTime)) {\
+            && (MMEnvelope_get_time(te) >= MMTrapezoidEnv_get(te)->sustainTime)) {\
             MMTrapezoidEnv_startRelease(te);\
         } else if ((MMEnvelope_getState(te) == MMTrapezoidEnvState_RELEASE)\
-                && (MMEnvelope_get_time(te) >= MMTrapezoidEnv_get(te)->releaseTime)) {\
-            MMLineFunc2D_set_mb(&MMTrapezoidEnv_get(te)->lf, 0, MMTrapezoidEnv_get(te)->min);\
+            && (MMEnvelope_get_time(te) >= MMTrapezoidEnv_get(te)->releaseTime)) {\
+            MMLineFunc2D_set_mb(&MMTrapezoidEnv_get(te)->lf, 0,\
+                    MMTrapezoidEnv_get(te)->min);\
             MMEnvelope_getState(te) = MMEnvelopeState_OFF;\
         }\
     } while (0)

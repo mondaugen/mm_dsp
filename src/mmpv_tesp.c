@@ -2,6 +2,9 @@
 /* This is sort of a proof-of-concept and will probably become obsolete when the
  * MMEnvedSamplePlayer is generalized for arbitrary envelopes */
 #include "mmpv_tesp.h"
+#ifdef MM_DSP_DEBUG
+ #include <assert.h>
+#endif  
 
 /* Choose noteOn method by checking the rate source. Using the sustain time is
  * not supported when using the poly_voice_manager. */
@@ -9,28 +12,11 @@
     if (np->rateSource == MMPvtespRateSource_RATE) {\
         MMTrapEnvedSamplePlayer_noteOn_Rate(\
                 tesp,\
-                np->note,\
-                np->amplitude,\
-                np->interpolation,\
-                np->index,\
-                np->attackTime,\
-                np->releaseTime,\
-                -1,\
-                np->samples,\
-                np->loop,\
-                np->rate);\
+                &np->noteOnParams);\
     } else {\
         MMTrapEnvedSamplePlayer_noteOn(\
                 tesp,\
-                np->note,\
-                np->amplitude,\
-                np->interpolation,\
-                np->index,\
-                np->attackTime,\
-                np->releaseTime,\
-                -1,\
-                np->samples,\
-                np->loop);\
+                &np->noteOnParams);\
     }
 
 struct __MMPvtesp {
@@ -64,7 +50,8 @@ static void MMPvtesp_turnOff(MMPolyVoice *pv, MMPolyVoiceParams *params)
          * release and make it so the note is free (available) even later. */
         return; /* Already releasing */
     }
-    MMTrapEnvedSamplePlayer_getTrapezoidEnv(tesp).releaseTime = np->releaseTime;
+    MMTrapEnvedSamplePlayer_getTrapezoidEnv(tesp).releaseTime =
+        np->noteOnParams.releaseTime;
     MMEnvelope_startRelease(&MMTrapEnvedSamplePlayer_getTrapezoidEnv(tesp));
 }
 
@@ -78,7 +65,8 @@ static void MMPvtesp_onDone(MMEnvedSamplePlayer *esp)
     ((MMPolyVoiceParams*)np)->allocator ?
         ((MMPolyVoiceParams*)np)->yield_params_to_allocator(
             ((MMPolyVoiceParams*)np)->allocator,
-            /* the allocator yielding function should expect a note of type MMSample* */
+            /* the allocator yielding function should expect a note of type
+             * MMSample* */
             (void *)&(MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).note))
         : 0;
     /* If params is from a NOTEON, that means the note was stolen, told to end,
@@ -118,7 +106,8 @@ static int MMPvtesp_compare(MMPolyVoice *pv, MMPolyVoiceParams *params)
 {
     MMTrapEnvedSamplePlayer *tesp = ((MMPvtesp*)pv)->tesp;
     MMPvtespParams *np = (MMPvtespParams*)params;
-    if (MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).note == np->note) {
+    if (MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).note 
+            == np->noteOnParams.note) {
         return 0;
     }
     return 1;
@@ -138,6 +127,9 @@ static void MMPvtesp_init(MMPvtesp *pvtesp, MMTrapEnvedSamplePlayer *tesp)
 MMPvtesp *MMPvtesp_new(MMTrapEnvedSamplePlayer *tesp)
 {
     MMPvtesp *result = (MMPvtesp*)malloc(sizeof(MMPvtesp));
+#ifdef MM_DSP_DEBUG
+    assert(result);
+#endif  
     if (result) {
         MMPvtesp_init(result,tesp);
     }
@@ -147,17 +139,18 @@ MMPvtesp *MMPvtesp_new(MMTrapEnvedSamplePlayer *tesp)
 MMPvtespParams *MMPvtespParams_new()
 {
     MMPvtespParams *result = (MMPvtespParams*)malloc(sizeof(MMPvtespParams));
+#ifdef MM_DSP_DEBUG
+    assert(result);
+#endif  
     MMPolyVoiceParams_init(result);
     result->paramType       = MMPvtespParamType_NOTEOFF;
     result->rateSource      = MMPvtespRateSource_NOTE;
-    result->rate            = 0;
-    result->note            = 0;
-    result->amplitude       = 0;
-    result->interpolation   = MMInterpMethod_NONE;
-    result->index           = 0;
-    result->attackTime      = 0;
-    result->releaseTime     = 0;
-    result->samples         = NULL;
-    result->loop            = 0;
+    result->noteOnParams.rate          = 0;
+    result->noteOnParams.note          = 0;
+    result->noteOnParams.amplitude     = 0;
+    result->noteOnParams.index         = 0;
+    result->noteOnParams.attackTime    = 0;
+    result->noteOnParams.releaseTime   = 0;
+    result->noteOnParams.samples       = NULL;
     return result;
 }

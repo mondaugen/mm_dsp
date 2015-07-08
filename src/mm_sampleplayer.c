@@ -6,108 +6,55 @@
  #include <assert.h>
 #endif /* MM_DSP_DEBUG */ 
 
-/* Writes a sample according to lookup speed and wavetable into the busses of
- * the sample player. No interpolation for now. */
-static void MMSamplePlayerSigProc_tick_sum(MMSigProc *sp)
+/* Accepts a MMSamplePlayerSigProc* casted to MMSigProc*.  If sp->outBus and
+ * sp->samples aren't NULL, the outBus (which should only contain one channel,
+ * see the init function) is filled with values interpolated from spsp->samples.
+ * spsp->index is updated using spsp->rate.  This function assumes spsp->rate
+ * and spsp->index are in Q_24_8 format.  If sp->outBus or sp->samples are NULL,
+ * the function returns without writing anything to the bus. This means whatever
+ * was in the bus before is still there. This is for speed: most likely this
+ * will be used in conjunction with an envelope, which should be multiplying the
+ * bus by 0 when spsp is not playing. To write zeros would be doing the same
+ * operation twice.  Another consequence is that the length of playback is
+ * quantized to the size of outBus, because the values of spsp can only be
+ * updated between calls to this function (unless you change the values during 
+ * interrupts, god forbid. This would result in a dereferencing of a NULL
+ * pointer. Don't do this.). You see, another reason to use the envelope. */
+static void MMSamplePlayerSigProc_tick_no_sum_interp_cubic(MMSigProc *sp)
 {
-    /* Call superclass tick method */
     MMSigProc_defaultTick(sp);
-    if (MMSigProc_getState(sp) == MMSigProc_State_DONE) {
-        return;
-    }
     MMSamplePlayerSigProc *spsp = (MMSamplePlayerSigProc*)sp;
-    size_t i;
-    for (i = 0; 
-         i < (spsp->parent->outBus->size * spsp->parent->outBus->channels);
-         i += spsp->parent->outBus->channels) {
-        /* The sample player is only compatible with busses of one channel, so
-         * it will just write something to the first channel (0) and nothing to
-         * the remaining channels */
-        switch (spsp->interp) {
-            case MMInterpMethod_NONE:
-                MMSamplePlayerSigProc_getSampleInterpNone_sum_(spsp,
-                        spsp->parent->outBus->data + i);
-                break;
-            case MMInterpMethod_LINEAR:
-                MMSamplePlayerSigProc_getSampleInterpLinear_sum_(spsp,
-                        spsp->parent->outBus->data + i);
-                break;
-            case MMInterpMethod_CUBIC:
-                MMSamplePlayerSigProc_getSampleInterpCubicMsp_sum_(spsp,
-                        spsp->parent->outBus->data + i);
-                break;
-            default:
-                *(spsp->parent->outBus->data + i) = 0;
-                break;
-        }
-        spsp->index += spsp->rate;
-        spsp->index = MM_wrapl(spsp->index, 0,
-                ((MMSamplePlayerQ_t)MMArray_get_length(spsp->samples)) 
-                << MMSAMPLEPLAYER_Q_WIDTH_FRAC);
+    if (spsp->outBus && spsp->samples) {
+        MMWavTab_get_interpCubic_q_24_8_v(spsp->outBus->data,
+                                          spsp->outBus->size,
+                                          spsp->samples,
+                                          &spsp->index,
+                                          spsp->rate);
     }
 }
 
-/* Writes a sample according to lookup speed and wavetable into the busses of
- * the sample player. */
-/* THIS DOESN'T WORK */
-static void MMSamplePlayerSigProc_tick_no_sum(MMSigProc *sp)
+static void MMSamplePlayerSigProc_tick_no_sum_interp_linear(MMSigProc *sp)
 {
-    /* Call superclass tick method */
-    MMSigProc_defaultTick(sp);
-    size_t i;
-    MMSamplePlayerSigProc *spsp = (MMSamplePlayerSigProc*)sp;
-    for (i = 0; 
-         i < (spsp->parent->outBus->size * spsp->parent->outBus->channels);
-         i += spsp->parent->outBus->channels) {
-        /* The sample player is only compatible with busses of one channel, so
-         * it will just write something to the first channel (0) and nothing to
-         * the remaining channels */
-        switch (spsp->interp) {
-            case MMInterpMethod_NONE:
-                MMSamplePlayerSigProc_getSampleInterpNone_(spsp,
-                        spsp->parent->outBus->data + i);
-                break;
-            case MMInterpMethod_LINEAR:
-                MMSamplePlayerSigProc_getSampleInterpLinear_(spsp,
-                        spsp->parent->outBus->data + i);
-                break;
-            case MMInterpMethod_CUBIC:
-                MMSamplePlayerSigProc_getSampleInterpCubicMsp_(spsp,
-                        spsp->parent->outBus->data + i);
-                break;
-            default:
-                *(spsp->parent->outBus->data + i) = 0;
-                break;
-        }
-        spsp->index += spsp->rate;
-        if (spsp->loop) {
-            spsp->index = MM_wrapl(spsp->index, 0,
-                    ((MMSamplePlayerQ_t)MMArray_get_length(spsp->samples)) 
-                        << MMSAMPLEPLAYER_Q_WIDTH_FRAC);
-        } else if ((spsp->index 
-                    >= (((MMSamplePlayerQ_t)MMArray_get_length(spsp->samples)) 
-                        << MMSAMPLEPLAYER_Q_WIDTH_FRAC))
-                || (spsp->index < 0)) {
-            MMSigProc_setState(spsp,MMSigProc_State_DONE);
-            /* Write 0 to the rest of the vector */
-            while (i < (spsp->parent->outBus->size 
-                        * spsp->parent->outBus->channels)) {
-                *(spsp->parent->outBus->data + i) = 0;
-                i += spsp->parent->outBus->channels;
-            }
-        }
-    }
-    /* we handle the doneAction */
-    if ((MMSigProc_getState(spsp) == MMSigProc_State_DONE) 
-            && (MMSigProc_getDoneAction(spsp) == MMSigProc_DoneAction_FREE)) {
-        sp->state = MMSigProc_State_WAIT_FREE;
-    }
+#ifdef MM_DSP_DEBUG 
+    assert(0);
+#endif /* MM_DSP_DEBUG */ 
 }
 
+static void MMSamplePlayerSigProc_tick_no_sum_interp_none(MMSigProc *sp)
+{
+#ifdef MM_DSP_DEBUG 
+    assert(0);
+#endif /* MM_DSP_DEBUG */ 
+}
 
 MMSamplePlayerSigProc *MMSamplePlayerSigProc_new(void)
 {
-    return (MMSamplePlayerSigProc*)malloc(sizeof(MMSamplePlayerSigProc));
+    MMSamplePlayerSigProc * result = 
+        (MMSamplePlayerSigProc*)malloc(sizeof(MMSamplePlayerSigProc));
+#ifdef MM_DSP_DEBUG
+    assert(result);
+#endif  
+    return result;
 }
 
 /* Pass a filled in MMSamplePlayerSigProcInitStuct into this function. If you
@@ -151,15 +98,3 @@ void MMSamplePlayerSigProc_init(MMSamplePlayerSigProc *sp,
     sp->rate = 0;
     sp->note = 0;
 }
-
-void MMSamplePlayerSigProc_setTickType(MMSamplePlayerSigProc *spsp,
-        MMSamplePlayerTickType tt)
-{
-    switch (tt) {
-        case MMSamplePlayerTickType_SUM:
-            MMSigProc_setTick(spsp,MMSamplePlayerSigProc_tick_sum);
-        case MMSamplePlayerTickType_NOSUM:
-            MMSigProc_setTick(spsp,MMSamplePlayerSigProc_tick_no_sum);
-    }
-}
-
