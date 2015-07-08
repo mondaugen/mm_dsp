@@ -18,19 +18,12 @@ typedef int64_t MMSamplePlayerQ_t;
 /* The number of fraction bits of this type */
 #define MMSAMPLEPLAYER_Q_WIDTH_FRAC 32ll 
 
-typedef struct __MMSamplePlayer MMSamplePlayer;
-
-struct __MMSamplePlayer {
-    /* only can output to one bus, this is not a problem (use a bus splitter..) */
-    MMBus         *outBus;
-    /* reference for where to put the playing samplers in the signal chain */
-    MMSigProc placeHolder;
-};
-
 typedef struct __MMSamplePlayerSigProc MMSamplePlayerSigProc;
 
 struct __MMSamplePlayerSigProc {
     MMSigProc         head; /* subclasses MMSigProc */
+    /* only can output to one bus, this is not a problem (use a bus splitter..) */
+    MMBus         *outBus;
     MMWavTab      *samples;
     MMSamplePlayerQ_t index;
     MMSamplePlayerQ_t rate;
@@ -39,7 +32,6 @@ struct __MMSamplePlayerSigProc {
                                compare to check if a particular note is sounding
                                */
     MMSamplePlayer *parent; /* where it gets its placeHolder and outBusses from */
-    MMBool            loop;
     MMInterpMethod  interp;
 };
 
@@ -47,6 +39,15 @@ typedef enum {
     MMSamplePlayerTickType_NOSUM,
     MMSamplePlayerTickType_SUM
 } MMSamplePlayerTickType;
+
+typedef struct __MMSamplePlayerSigProcInitStruct MMSamplePlayerSigProcInitStruct;
+
+struct __MMSamplePlayerSigProcInitStruct {
+    MMBus                 *outBus;
+    MMWavTab              *samples;
+    MMInterpMethod         interp;
+    MMSamplePlayerTickType tickType;
+};
 
 #define MMSamplePlayerSigProc_free(spsp) free(spsp) 
 

@@ -1,6 +1,7 @@
 #ifndef MM_INTERP_H
 #define MM_INTERP_H 
 
+#include <stdint.h> 
 #include "mm_sample.h" 
 
 typedef enum
@@ -53,6 +54,13 @@ typedef enum
      +((mu)+1.)*((mu)-1.)*((mu)-2.)/2.*(y0)    \
      -((mu)+1.)*(mu)*((mu)-2.)/2.*(y1)         \
      +((mu)+1.)*(mu)*((mu)-1.)/6.*(y2));       \
+
+void MM_interp_cubic_q_24_8_v(float *y_,
+                              uint32_t len_y_,
+                              float *y,
+                              uint32_t len_y,
+                              int32_t *idx0,
+                              int32_t rate);
 
 
 #endif /* MM_INTERP_H */

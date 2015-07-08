@@ -152,4 +152,29 @@ struct __MMWavTab {
                 (((MMSample)(0xffffffff & (index)))/(1ll << 32ll))); \
     } while (0)
 
+/* See mm_interp.h for information on how to use these. */
+#define MMWavTab_get_interpCubic_q_24_8_v(pdest,\
+                              len,\
+                              wavtab,\
+                              pidx0,\
+                              rate)\
+    MM_interp_cubic_q_24_8_v(pdest,\
+                              len,\
+                              MMArray_get_data(wavtab),\
+                              MMArray_get_length(wavtab),\
+                              pidx0,\
+                              rate)
+
+#define MMWavTab_get_interpLinear_q_24_8_v(pdest,\
+                              len,\
+                              wavtab,\
+                              pidx0,\
+                              rate)\
+    MM_interp_linear_q_24_8_v(pdest,\
+                              len,\
+                              MMArray_get_data(wavtab),\
+                              MMArray_get_length(wavtab),\
+                              pidx0,\
+                              rate)
+
 #endif /* MM_WAVTAB_H */
