@@ -1,4 +1,4 @@
-OPTIMIZE=-Ofast
+OPTIMIZE?=-Ofast
 DEBUG_FLAGS=-DMM_DSP_DEBUG -ggdb3
 # requires mm_primitives library
 # assumes it is contained in the parent directory
