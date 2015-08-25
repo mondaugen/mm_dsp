@@ -11,6 +11,10 @@ static void MMBusMult_tick(MMSigProc *bm)
         for (j = 0;
              j < ((MMBusMult*)bm)->resultBus->channels;
              j++) {
+#ifdef CHECK_SAMPLE_IS_FINITE
+            MMSample_assert_is_finite(((MMBusMult*)bm)->resultBus->data[i + j]);
+            MMSample_assert_is_finite(((MMBusMult*)bm)->otherBus->data[i + j]);
+#endif
             ((MMBusMult*)bm)->resultBus->data[i + j] 
                     *= ((MMBusMult*)bm)->otherBus->data[i + j];
         }

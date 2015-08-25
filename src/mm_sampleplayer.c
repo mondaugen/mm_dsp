@@ -10,12 +10,13 @@
  * sp->samples aren't NULL, the outBus (which should only contain one channel,
  * see the init function) is filled with values interpolated from spsp->samples.
  * spsp->index is updated using spsp->rate.  This function assumes spsp->rate
- * and spsp->index are in Q_24_8 format.  If sp->outBus or sp->samples are NULL,
- * the function returns without writing anything to the bus. This means whatever
- * was in the bus before is still there. This is for speed: most likely this
- * will be used in conjunction with an envelope, which should be multiplying the
- * bus by 0 when spsp is not playing. To write zeros would be doing the same
- * operation twice.  Another consequence is that the length of playback is
+ * and spsp->index are in Q_24_8 format. If spsp->samples are null the bus is
+ * filled with 0s. It would be nice if instead the values in the bus were just
+ * left as is and it was up to a following envelope to set values to 0, saving
+ * some computation. A problem with this is that if the values in the bus are
+ * NaN, multiplying by 0 will not yield 0. This is a more fool-proof way if for
+ * some reason the bus contains NaNs.
+ * Another consequence is that the length of playback is
  * quantized to the size of outBus, because the values of spsp can only be
  * updated between calls to this function (unless you change the values during 
  * interrupts, god forbid. This would result in a dereferencing of a NULL
@@ -24,12 +25,17 @@ static void MMSamplePlayerSigProc_tick_no_sum_interp_cubic(MMSigProc *sp)
 {
     MMSigProc_defaultTick(sp);
     MMSamplePlayerSigProc *spsp = (MMSamplePlayerSigProc*)sp;
-    if (spsp->outBus && spsp->samples) {
+    if (spsp->samples) {
         MMWavTab_get_interpCubic_q_24_8_v(spsp->outBus->data,
                                           spsp->outBus->size,
                                           spsp->samples,
                                           &spsp->index,
                                           spsp->rate);
+    } else {
+        /* Assume the bus is only one channel wide. This is caught on
+         * initialization of MMSamplePlayerSigProc if
+         * DEBUG is enabled. */
+        memset(spsp->outBus->data,0,spsp->outBus->size*sizeof(MMSample));
     }
 }
 
@@ -90,6 +96,9 @@ void MMSamplePlayerSigProc_init(MMSamplePlayerSigProc *sp,
 #endif /* MM_DSP_DEBUG */ 
     }
     sp->outBus = init->outBus;
+#ifdef MM_DSP_DEBUG
+        assert(sp->outBus); /* outBus shouldn't be NULL */
+#endif /* MM_DSP_DEBUG */ 
 #ifdef MM_DSP_DEBUG
     assert(sp->outBus->channels == 1); 
 #endif /* MM_DSP_DEBUG */ 

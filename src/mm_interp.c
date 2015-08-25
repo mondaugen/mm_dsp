@@ -47,6 +47,9 @@ void MM_interp_cubic_q_24_8_v(float *y_,
                 - frac0*frac_2*frac_1 * 0.166666667f*y_1
                 - frac1*frac0*frac_2 * 0.5f*y1
                 + frac1*frac0*frac_1 * 0.166666667f*y2; 
+#ifdef CHECK_SAMPLE_IS_FINITE
+        MMSample_assert_is_finite(y_[n]);
+#endif
         /* increment index */
         _idx0 += rate;
     }

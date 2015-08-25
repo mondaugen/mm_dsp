@@ -15,7 +15,7 @@ MMDSP_DEP	   += $(wildcard $(MMPRIMITIVES_INC_PATH)/*.h)
 MMDSP_CFLAGS	= $(OPTIMIZE)
 
 INC		= $(MMDSP_INC_PATH) $(MMPRIMITIVES_INC_PATH)
-CFLAGS	= $(foreach inc,$(INC),-I$(inc))
+CFLAGS	+= $(foreach inc,$(INC),-I$(inc))
 
 CFLAGS += $(DEBUG_FLAGS) -Wall -ffunction-sections -fdata-sections
 CFLAGS += -mlittle-endian -mthumb -mcpu=cortex-m4
