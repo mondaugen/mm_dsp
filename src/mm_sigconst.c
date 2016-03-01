@@ -7,7 +7,7 @@ static void MMSigConst_tick(MMSigProc *sp)
          i < (MMSigConst_getOutBus(sp)->size * MMSigConst_getOutBus(sp)->channels);
          i += MMSigConst_getOutBus(sp)->channels) {
         for (j = 0; j < MMSigConst_getOutBus(sp)->channels; j++) {
-            if (MMSigConst_getDoSum(sp)) {
+            if (MMSigConst_getDoSum(sp) == MMSigConst_doSum_TRUE) {
                 MMSigConst_getOutBus(sp)->data[i+j] += MMSigConst_getConstant(sp);
             } else {
                 MMSigConst_getOutBus(sp)->data[i+j] = MMSigConst_getConstant(sp);
