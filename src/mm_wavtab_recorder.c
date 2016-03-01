@@ -11,7 +11,7 @@ static void MMWavTabRecorder_tick(MMSigProc *sp)
     for (i = 0; 
             i < wtr->inputBus->channels * wtr->inputBus->size;
             i += wtr->inputBus->channels) {
-        if (wtr->currentIndex >= MMArray_get_length(wtr->buffer)) {
+        if (wtr->currentIndex >= wtr->maxLength) {
             wtr->state = MMWavTabRecorderState_STOPPED;
             return;
         }
@@ -20,6 +20,8 @@ static void MMWavTabRecorder_tick(MMSigProc *sp)
     }
 }
 
+/* This does not totally initialize the recorder! Make sure remaining values are
+ * defined before calling the tick method. */
 void MMWavTabRecorder_init(MMWavTabRecorder *wtr)
 {
     MMSigProc_init((MMSigProc*)wtr);

@@ -19,6 +19,13 @@ struct __MMWavTabRecorder {
     MMWavTab *buffer;
     MMWavTabRecorderState state;
     size_t currentIndex;
+    /* The absolute maximum length that can be recorded. This
+       is because the buffer's length may get redefined
+       elsewhere. This ensures that recording only continues
+       when valid memory is available and so recordings longer
+       than the current buffer length are possible if memory
+       is available. */
+    size_t maxLength; 
     MMBus *inputBus;
 };
 
