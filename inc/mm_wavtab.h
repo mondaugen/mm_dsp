@@ -12,6 +12,9 @@ struct __MMWavTab {
     MMArray head;
     uint32_t samplerate; /* The sample rate that the sound in the wavetable was
                             "recorded" at*/
+    uint32_t n_players;  /* Can be used to keep track of how many things are
+                            playing this wavetable, to see if it is being used.
+                            */
 };
 
 /* Table lookup, no interpolation. dest is a pointer to a Sample type. Wavtab is
