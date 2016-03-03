@@ -180,4 +180,7 @@ struct __MMWavTab {
                               pidx0,\
                               rate)
 
+void MMWavTab_inc_n_players(MMWavTab *w);
+void MMWavTab_dec_n_players(MMWavTab *w);
+
 #endif /* MM_WAVTAB_H */
