@@ -26,11 +26,23 @@ static void MMSamplePlayerSigProc_tick_no_sum_interp_cubic(MMSigProc *sp)
     MMSigProc_defaultTick(sp);
     MMSamplePlayerSigProc *spsp = (MMSamplePlayerSigProc*)sp;
     if (spsp->samples) {
-        MMWavTab_get_interpCubic_q_24_8_v(spsp->outBus->data,
-                                          spsp->outBus->size,
-                                          spsp->samples,
-                                          &spsp->index,
-                                          spsp->rate);
+        if (spsp->p_rate) {
+            /* TODO: Could be optimized by assuring outBus has size as power of
+             * 2 */
+            mm_q8_24_t rinc = (*spsp->p_rate - spsp->last_rate) / ((mm_q8_24_t)spsp->outBus->size);
+            MMWavTab_get_interpCubic_rinc_q_8_24_idx_q_24_8_v(spsp->outBus->data,
+                                                     spsp->outBus->size,
+                                                     spsp->samples,
+                                                     &spsp->index,
+                                                     &spsp->last_rate,
+                                                     rinc);
+        } else {
+            MMWavTab_get_interpCubic_q_24_8_v(spsp->outBus->data,
+                                              spsp->outBus->size,
+                                              spsp->samples,
+                                              &spsp->index,
+                                              spsp->rate);
+        }
     } else {
         /* Assume the bus is only one channel wide. This is caught on
          * initialization of MMSamplePlayerSigProc if
@@ -105,5 +117,6 @@ void MMSamplePlayerSigProc_init(MMSamplePlayerSigProc *sp,
     sp->samples = init->samples;
     sp->index = 0;
     sp->rate = 0;
+    sp->p_rate = NULL;
     sp->note = 0;
 }

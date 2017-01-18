@@ -30,6 +30,7 @@ typedef struct __MMTrapEnvedSamplePlayer_noteOnStruct {
         MMSample        sustainTime;
         MMWavTab        *samples;
         MMSample        rate;
+        mm_q8_24_t *p_rate;
 } MMTrapEnvedSamplePlayer_noteOnStruct;
 
 void MMTrapEnvedSamplePlayer_noteOn(
@@ -37,6 +38,10 @@ void MMTrapEnvedSamplePlayer_noteOn(
         MMTrapEnvedSamplePlayer_noteOnStruct *init);
 
 void MMTrapEnvedSamplePlayer_noteOn_Rate(
+        MMTrapEnvedSamplePlayer *tesp,
+        MMTrapEnvedSamplePlayer_noteOnStruct *init);
+
+void MMTrapEnvedSamplePlayer_noteOn_pRate(
         MMTrapEnvedSamplePlayer *tesp,
         MMTrapEnvedSamplePlayer_noteOnStruct *init);
 

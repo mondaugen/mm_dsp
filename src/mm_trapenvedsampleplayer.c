@@ -64,3 +64,31 @@ void MMTrapEnvedSamplePlayer_noteOn_Rate(
                                 init->sustainTime);
     MMEnvelope_startAttack(&MMTrapEnvedSamplePlayer_getTrapezoidEnv(tesp));
 }
+
+/* set the rate of playback from a pointer to a rate so that it can update
+ * dynamically */
+void MMTrapEnvedSamplePlayer_noteOn_pRate(
+        MMTrapEnvedSamplePlayer *tesp,
+        MMTrapEnvedSamplePlayer_noteOnStruct *init)
+{
+    MMSamplePlayerSigProc_setIndex_flt_(
+            &(MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp)),
+            init->index);
+    MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).note =
+        init->note;
+    MMSamplePlayerSigProc_setRate_ptr_(
+            &(MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp)),
+            init->p_rate);
+    MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).last_rate = 
+        *init->p_rate;
+    MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).samples = 
+        init->samples;
+    MMTrapezoidEnv_setEnvParams(&tesp->teg.te,
+                                0,
+                                init->amplitude,
+                                init->attackTime,
+                                init->releaseTime,
+                                init->sustainTime);
+    MMEnvelope_startAttack(&MMTrapEnvedSamplePlayer_getTrapezoidEnv(tesp));
+}
+

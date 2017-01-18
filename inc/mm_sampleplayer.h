@@ -18,6 +18,9 @@ typedef int32_t MMSamplePlayerQ_t;
 /* The number of fraction bits of this type */
 #define MMSAMPLEPLAYER_Q_WIDTH_FRAC 8L
 
+#define MMSamplePlayerQ_t_from_flt(f) \
+    ((float)(f) * ((float)(1 << MMSAMPLEPLAYER_Q_WIDTH_FRAC)))
+
 typedef struct __MMSamplePlayerSigProc MMSamplePlayerSigProc;
 
 struct __MMSamplePlayerSigProc {
@@ -31,6 +34,12 @@ struct __MMSamplePlayerSigProc {
                                be modulated so we need something static to
                                compare to check if a particular note is sounding
                                */
+    /* Dynamic rate */
+    mm_q8_24_t *p_rate; /* Optionally a pointer to a rate value that can
+                                  change between calls to the ..._tick() functions.
+                                  */
+    mm_q8_24_t last_rate; /* The rate is determined by interpolating from
+                                    this value to the *p_rate value */
     MMInterpMethod  interp;
 };
 
@@ -58,6 +67,10 @@ void MMSamplePlayerSigProc_init(MMSamplePlayerSigProc *sp,
 #define MMSamplePlayerSigProc_setRate_flt_(spsp,f) \
     (spsp)->rate = (MMSamplePlayerQ_t)((float)(f) \
             * ((float)(1 << MMSAMPLEPLAYER_Q_WIDTH_FRAC)))
+
+/* Set the pointer to the rate, which is a *Q type */
+#define MMSamplePlayerSigProc_setRate_ptr_(spsp,f) \
+    (spsp)->p_rate = f
 
 /* Set the index, which is a Q type, using a float */
 #define MMSamplePlayerSigProc_setIndex_flt_(spsp,f) \

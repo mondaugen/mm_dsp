@@ -168,6 +168,34 @@ struct __MMWavTab {
                               pidx0,\
                               rate)
 
+#define MMWavTab_get_interpCubic_rinc_q_24_8_v(pdest,\
+                              len,\
+                              wavtab,\
+                              pidx0,\
+                              prate,\
+                              rinc)\
+    MM_interp_cubic_rinc_q_24_8_v(pdest,\
+                              len,\
+                              MMArray_get_data(wavtab),\
+                              MMArray_get_length(wavtab),\
+                              pidx0,\
+                              prate,\
+                              rinc)
+
+#define MMWavTab_get_interpCubic_rinc_q_8_24_idx_q_24_8_v(pdest,\
+                              len,\
+                              wavtab,\
+                              pidx0,\
+                              prate,\
+                              rinc)\
+    MM_interp_cubic_rinc_q_8_24_idx_q_24_8_v(pdest,\
+                              len,\
+                              MMArray_get_data(wavtab),\
+                              MMArray_get_length(wavtab),\
+                              pidx0,\
+                              prate,\
+                              rinc)
+
 #define MMWavTab_get_interpLinear_q_24_8_v(pdest,\
                               len,\
                               wavtab,\
@@ -179,6 +207,7 @@ struct __MMWavTab {
                               MMArray_get_length(wavtab),\
                               pidx0,\
                               rate)
+
 
 void MMWavTab_inc_n_players(MMWavTab *w);
 void MMWavTab_dec_n_players(MMWavTab *w);
