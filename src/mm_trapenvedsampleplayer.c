@@ -29,6 +29,9 @@ void MMTrapEnvedSamplePlayer_noteOn(
     MMSamplePlayerSigProc_setRate_flt_(
             &(MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp)), 
             MMCC_MIDItoRate(init->note) / MMWavTab_get_freq(init->samples));
+    MMSamplePlayerSigProc_setRate_ptr_(
+            &(MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp)),
+            NULL);
     MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).samples =
         init->samples;
     MMTrapezoidEnv_setEnvParams(&tesp->teg.te,
@@ -54,6 +57,9 @@ void MMTrapEnvedSamplePlayer_noteOn_Rate(
     MMSamplePlayerSigProc_setRate_flt_(
             &(MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp)),
             init->rate);
+    MMSamplePlayerSigProc_setRate_ptr_(
+            &(MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp)),
+            NULL);
     MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).samples = 
         init->samples;
     MMTrapezoidEnv_setEnvParams(&tesp->teg.te,
