@@ -7,7 +7,8 @@
 
 #include "mm_busconstmult.h" 
 
-static void MMBusConstMult_tick(MMSigProc *sp)
+static void
+MMBusConstMult_tick(MMSigProc *sp)
 {
     MMBusConstMult *bcm = (MMBusConstMult*)sp;
     MMSigProc_defaultTick(sp);
