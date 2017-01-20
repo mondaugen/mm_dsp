@@ -72,6 +72,9 @@ void MMEnvedSamplePlayer_init(MMEnvedSamplePlayer *esp,
             esp->envBus);
     /* Add bus multiplyer to top of internal sig chain */
     MMSigProc_insertAfter(&esp->sigChain.sigProcs, &esp->busMult);
+    /* Initialize and add bus constant multiplier */
+    MMBusConstMult_init(&esp->bcm,esp->envBus,0.);
+    MMSigProc_insertAfter(&esp->sigChain.sigProcs, &esp->bcm);
     /* Init sample player sig proc */
     MMSamplePlayerSigProcInitStruct spspis;
     /* If the signal is to be summed into the final bus, the sample player must

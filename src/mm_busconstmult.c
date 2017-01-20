@@ -11,15 +11,20 @@ static void MMBusConstMult_tick(MMSigProc *sp)
 {
     MMBusConstMult *bcm = (MMBusConstMult*)sp;
     MMSigProc_defaultTick(sp);
-    MMSample cinc = (bcm->newConst - bcm->lastConst)
-        / bcm->bus->size;
+    MMSample cinc;
+    if (bcm->newConst) {
+        cinc = (*bcm->newConst - bcm->lastConst)
+            / bcm->bus->size;
+    } else {
+        cinc = 0.; /* Will just keep multiplying by bcm->lastConst */
+    }
     size_t i, j;
     for (i = 0;
-         i < (bcm->bus->size * bcm->bus->channels);
-         i += bcm->bus->channels) {
+            i < (bcm->bus->size * bcm->bus->channels);
+            i += bcm->bus->channels) {
         for (j = 0;
-             j < bcm->bus->channels;
-             j++) {
+                j < bcm->bus->channels;
+                j++) {
             bcm->bus->data[i+j] *=
                 bcm->lastConst;
         }
@@ -35,6 +40,6 @@ void MMBusConstMult_init(MMBusConstMult *bcm,
     MMSigProc_setTick(bcm,MMBusConstMult_tick);
     bcm->bus = bus;
     bcm->lastConst = lastConst;
-    bcm->newConst = lastConst;
+    bcm->newConst = NULL;
 }
 

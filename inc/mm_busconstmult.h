@@ -13,7 +13,11 @@ struct __MMBusConstMult {
     /* The constant that will be interpolated from. */
     MMSample lastConst; 
     /* The constant that will be interpolated to. */
-    MMSample newConst;
+    MMSample *newConst;
 };
+
+void MMBusConstMult_init(MMBusConstMult *bcm,
+                         MMBus *bus,
+                         MMSample lastConst);
 
 #endif /* MM_BUSCONSTMULT_H */

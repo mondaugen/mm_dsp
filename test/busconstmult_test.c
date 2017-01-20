@@ -18,6 +18,7 @@ int busconstmult_short_test(void)
     MMBusConstMult bcm;
     MMBus *bus;
     bus = MMBus_new(SHORT_TEST_BUS_LEN,SHORT_TEST_BUS_NCHANS);
+    MMSample busConst = 1.;
     MMBusConstMult_init(&bcm, bus, 0.);
     MMSample correct_data[SHORT_TEST_BUS_LEN*SHORT_TEST_BUS_NCHANS];
     size_t i, j;
@@ -27,11 +28,12 @@ int busconstmult_short_test(void)
         bus->data[i] = 1.;
         bus->data[i+1] = -1.;
     }
-    bcm.newConst = 1.;
+    bcm.newConst = &busConst;
     MMSigProc_tick((MMSigProc*)&bcm);
     for (i = 0; i < (bus->size*bus->channels); i++) {
             assert(FABS(bus->data[i] - correct_data[i]) < MM_TEST_ERR_TOL);
     }
+    free(bus);
     return 1;
 }
 

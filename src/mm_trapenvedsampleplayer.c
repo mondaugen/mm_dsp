@@ -34,6 +34,9 @@ void MMTrapEnvedSamplePlayer_noteOn(
             NULL);
     MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).samples =
         init->samples;
+    MMEnvedSamplePlayer *esp = (MMEnvedSamplePlayer*)tesp;
+    esp->bcm.lastConst = *init->p_gain;
+    esp->bcm.newConst = init->p_gain;
     MMTrapezoidEnv_setEnvParams(&tesp->teg.te,
                                 0,
                                 init->amplitude,
@@ -62,6 +65,9 @@ void MMTrapEnvedSamplePlayer_noteOn_Rate(
             NULL);
     MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).samples = 
         init->samples;
+    MMEnvedSamplePlayer *esp = (MMEnvedSamplePlayer*)tesp;
+    esp->bcm.lastConst = *init->p_gain;
+    esp->bcm.newConst = init->p_gain;
     MMTrapezoidEnv_setEnvParams(&tesp->teg.te,
                                 0,
                                 init->amplitude,
@@ -95,6 +101,9 @@ void MMTrapEnvedSamplePlayer_noteOn_pRate(
         tmp;
     MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).samples = 
         init->samples;
+    MMEnvedSamplePlayer *esp = (MMEnvedSamplePlayer*)tesp;
+    esp->bcm.lastConst = *init->p_gain;
+    esp->bcm.newConst = init->p_gain;
     MMTrapezoidEnv_setEnvParams(&tesp->teg.te,
                                 0,
                                 init->amplitude,

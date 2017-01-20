@@ -31,6 +31,9 @@ typedef struct __MMTrapEnvedSamplePlayer_noteOnStruct {
         MMWavTab        *samples;
         MMSample        rate;
         mm_q8_24_t      *p_rate;
+        /* Pointer to a gain quantity that will
+         * scale the output of the player */
+        MMSample        *p_gain; 
 } MMTrapEnvedSamplePlayer_noteOnStruct;
 
 void MMTrapEnvedSamplePlayer_noteOn(

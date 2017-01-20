@@ -12,6 +12,7 @@
 #include "mm_sigconst.h" 
 #include "mm_busmerger.h" 
 #include "mm_busmult.h"
+#include "mm_busconstmult.h" 
 
 typedef struct __MMEnvedSamplePlayer MMEnvedSamplePlayer;
 
@@ -25,6 +26,7 @@ struct __MMEnvedSamplePlayer {
     MMBusMult               busMult;
     MMBus                   *internalBus;
     MMBus                   *envBus;
+    MMBusConstMult          bcm;
     void                    (*onDone)(MMEnvedSamplePlayer*);
     void                    *onDoneParams;
 };
