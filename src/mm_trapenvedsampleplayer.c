@@ -88,8 +88,11 @@ void MMTrapEnvedSamplePlayer_noteOn_pRate(
     MMSamplePlayerSigProc_setRate_ptr_(
             &(MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp)),
             init->p_rate);
+    mm_q8_24_t tmp;
+    tmp = (mm_q8_24_t)(((int64_t)(MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp)).rate
+            * *(MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp)).p_rate) >> 24LL);
     MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).last_rate = 
-        *init->p_rate;
+        tmp;
     MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).samples = 
         init->samples;
     MMTrapezoidEnv_setEnvParams(&tesp->teg.te,
