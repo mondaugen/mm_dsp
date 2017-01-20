@@ -4,19 +4,10 @@
 #include <math.h> 
 
 #include "mm_interp.h"
-
-#define SHOW_TEST_START(msg) \
-   printf("Doing test: %s... ",msg) 
-#define SHOW_TEST_RESULT(res) \
-    if (res) { \
-        printf("passed\n"); \
-    } else { \
-        printf("failed\n"); \
-    }
+#include "test.h" 
 
 #define MM_TEST_ERR_TOL 1.e-6
 #define MM_TEST_RINC_ERR_TOL 1.e-5
-#define FABS(x) (((x) < 0) ? (-(x)) : (x)) 
 
 static int test_correct_interp(void)
 {
