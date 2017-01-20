@@ -23,11 +23,11 @@ static int test_correct_interp(void)
     float   in[] = {1.,2.,3.,-3.,-2.,-1.};
     float   out[6];
     int32_t idx0 = 0;
-    int32_t rate = 1 << 8;
-    int32_t rinc = 0;
+    mm_q8_24_t rate = 1 << 24;
+    mm_q8_24_t rinc = 0;
     float   out_correct[] = {1.,2.,3.,-3.,-2.,-1.};
     SHOW_TEST_START("test_correct_interp");
-    MM_interp_cubic_rinc_q_24_8_v(out,6,in,6,&idx0,&rate,rinc);
+    MM_interp_cubic_rinc_q_8_24_idx_q_24_8_v(out,6,in,6,&idx0,&rate,rinc);
     int n;
     for (n = 0; n < 6; n++) {
         assert(FABS(out[n] - out_correct[n]) < MM_TEST_ERR_TOL);
@@ -41,8 +41,8 @@ static int test_loop_interp(void)
     float   in[TLI_TAB_LEN];
     float   out[4*TLI_TAB_LEN];
     int32_t idx0 = (TLI_TAB_LEN/2) << 8;
-    int32_t rate = (int32_t)(-0.5 * 0x100);
-    int32_t rinc = 0;
+    mm_q8_24_t rate = (int32_t)(-0.5 * (1L << 24));
+    mm_q8_24_t rinc = 0;
     float   out_correct[4*TLI_TAB_LEN];
     size_t n;
     for (n = 0; n < TLI_TAB_LEN; n++) {
@@ -52,7 +52,7 @@ static int test_loop_interp(void)
         out_correct[n] = sinf((n*0.5)/TLI_TAB_LEN*2.*M_PI);
     }
     SHOW_TEST_START("test_loop_interp");
-    MM_interp_cubic_rinc_q_24_8_v(out,4*TLI_TAB_LEN,in,TLI_TAB_LEN,&idx0,&rate,rinc);
+    MM_interp_cubic_rinc_q_8_24_idx_q_24_8_v(out,4*TLI_TAB_LEN,in,TLI_TAB_LEN,&idx0,&rate,rinc);
     float maxerr = 0.;
     for (n = 0; n < (4*TLI_TAB_LEN); n++) {
         assert(FABS(out[n] - out_correct[n]) < MM_TEST_ERR_TOL);
@@ -68,26 +68,26 @@ static int test_loop_interp_rinc(void)
     float   in[TLI_TAB_LEN];
     float   out[4*TLI_TAB_LEN];
     int32_t idx0 = 0;
-    int32_t rate = (int32_t)(1 * 0x100);
+    mm_q8_24_t rate = (mm_q8_24_t)(1 * (1L << 24));
     /* Will be going 5x as fast at the end of the interpolation
      * NOTE: This will not work if the table length is more that 256. */
-    int32_t rinc = (4*0x100) / (4*TLI_TAB_LEN);
+    mm_q8_24_t rinc = (4*(1L << 24)) / (4*TLI_TAB_LEN);
     float   out_correct[4*TLI_TAB_LEN];
     size_t n;
     for (n = 0; n < TLI_TAB_LEN; n++) {
         in[n] = sinf(((float)n)/TLI_TAB_LEN*2.*M_PI);
     }
-    int32_t _rate = rate;
-    int32_t _idx = idx0;
+    mm_q8_24_t _rate = rate;
+    mm_q8_24_t _idx = idx0;
     for (n = 0; n < (4*TLI_TAB_LEN); n++) {
-        float tmp = (float)(_idx >> 8);
-        tmp += (float)(_idx & 0xff) / 256.f;
+        float tmp = (float)(_idx >> 24);
+        tmp += (float)(_idx & 0xffffff) / ((float)(1L << 24));
         out_correct[n] = sinf(tmp/TLI_TAB_LEN*2.*M_PI);
         _idx += _rate;
         _rate += rinc;
     }
     SHOW_TEST_START("test_loop_interp_rinc");
-    MM_interp_cubic_rinc_q_24_8_v(out,4*TLI_TAB_LEN,in,TLI_TAB_LEN,&idx0,&rate,rinc);
+    MM_interp_cubic_rinc_q_8_24_idx_q_24_8_v(out,4*TLI_TAB_LEN,in,TLI_TAB_LEN,&idx0,&rate,rinc);
     assert(rate == _rate);
     float maxerr = 0.;
     for (n = 0; n < (4*TLI_TAB_LEN); n++) {

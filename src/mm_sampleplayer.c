@@ -29,7 +29,7 @@ static void MMSamplePlayerSigProc_tick_no_sum_interp_cubic(MMSigProc *sp)
         if (spsp->p_rate) {
             /* TODO: Could be optimized by assuring outBus has size as power of
              * 2 */
-            mm_q8_24_t rinc = (*spsp->p_rate - spsp->last_rate) / ((mm_q8_24_t)spsp->outBus->size);
+            mm_q8_24_t rinc = (*spsp->p_rate + spsp->rate - spsp->last_rate) / ((mm_q8_24_t)spsp->outBus->size);
             MMWavTab_get_interpCubic_rinc_q_8_24_idx_q_24_8_v(spsp->outBus->data,
                                                      spsp->outBus->size,
                                                      spsp->samples,

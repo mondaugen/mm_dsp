@@ -82,6 +82,9 @@ void MMTrapEnvedSamplePlayer_noteOn_pRate(
             init->index);
     MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).note =
         init->note;
+    MMSamplePlayerSigProc_setRate_flt_(
+            &(MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp)),
+            init->rate);
     MMSamplePlayerSigProc_setRate_ptr_(
             &(MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp)),
             init->p_rate);

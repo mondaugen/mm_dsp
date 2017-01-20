@@ -24,21 +24,21 @@ typedef int32_t MMSamplePlayerQ_t;
 typedef struct __MMSamplePlayerSigProc MMSamplePlayerSigProc;
 
 struct __MMSamplePlayerSigProc {
-    MMSigProc         head; /* subclasses MMSigProc */
+    MMSigProc          head; /* subclasses MMSigProc */
     /* only can output to one bus, this is not a problem (use a bus splitter..) */
-    MMBus         *outBus;
-    MMWavTab      *samples;
-    MMSamplePlayerQ_t index;
-    MMSamplePlayerQ_t rate;
-    MMSample          note; /* the midi note of this instance, because rate may
-                               be modulated so we need something static to
-                               compare to check if a particular note is sounding
-                               */
+    MMBus             *outBus;
+    MMWavTab          *samples;
+    MMSamplePlayerQ_t  index;
+    mm_q8_24_t         rate;
+    MMSample           note; /* the midi note of this instance, because rate may
+                                be modulated so we need something static to
+                                compare to check if a particular note is sounding
+                                */
     /* Dynamic rate */
-    mm_q8_24_t *p_rate; /* Optionally a pointer to a rate value that can
-                                  change between calls to the ..._tick() functions.
-                                  */
-    mm_q8_24_t last_rate; /* The rate is determined by interpolating from
+    mm_q8_24_t        *p_rate; /* Optionally a pointer to a rate value that can
+                                   change between calls to the ..._tick() functions.
+                                   */
+    mm_q8_24_t         last_rate; /* The rate is determined by interpolating from
                                     this value to the *p_rate value */
     MMInterpMethod  interp;
 };
@@ -65,8 +65,7 @@ void MMSamplePlayerSigProc_init(MMSamplePlayerSigProc *sp,
 
 /* Set the rate, which is a Q type, using a float */
 #define MMSamplePlayerSigProc_setRate_flt_(spsp,f) \
-    (spsp)->rate = (MMSamplePlayerQ_t)((float)(f) \
-            * ((float)(1 << MMSAMPLEPLAYER_Q_WIDTH_FRAC)))
+    (spsp)->rate = mm_q8_24_t_from_MMSample(f)
 
 /* Set the pointer to the rate, which is a *Q type */
 #define MMSamplePlayerSigProc_setRate_ptr_(spsp,f) \
