@@ -78,8 +78,8 @@ void MM_interp_cubic_rinc_q_8_24_idx_q_24_8_v(float *y_,
                                               mm_q8_24_t rinc)
 {
     uint32_t n, idx0_;
-    int32_t _idx0 = *idx0, M;
-    mm_q8_24_t _rate = *rate;
+    int32_t _idx0 = *idx0, M, oldidx, adv, err = 0;
+    mm_q8_24_t _rate = *rate, adj_rate;
     float y_1, y0, y1, y2,
               frac1, frac0, frac_1, frac_2;
     /* len is only the integer part so shift it up by 8 bits */
@@ -89,7 +89,11 @@ void MM_interp_cubic_rinc_q_8_24_idx_q_24_8_v(float *y_,
         for (n = 0; n < len_y_; n++) {
             y_[n]=0;
             /* increment index */
-            _idx0 += (_rate >> 16);
+            oldidx = _idx0;
+            adj_rate = _rate + err;
+            _idx0 += (adj_rate >> 16);
+            adv = _idx0 - oldidx;
+            err = adj_rate - (adv << 16);
             _rate += rinc;
         }
     } else {
@@ -122,7 +126,11 @@ void MM_interp_cubic_rinc_q_8_24_idx_q_24_8_v(float *y_,
             MMSample_assert_is_finite(y_[n]);
 #endif
             /* increment index */
-            _idx0 += (_rate >> 16);
+            oldidx = _idx0;
+            adj_rate = _rate + err;
+            _idx0 += (adj_rate >> 16);
+            adv = _idx0 - oldidx;
+            err = adj_rate - (adv << 16);
             _rate += rinc;
         }
     }
