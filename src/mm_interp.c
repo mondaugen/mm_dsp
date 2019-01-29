@@ -75,10 +75,11 @@ void MM_interp_cubic_rinc_q_8_24_idx_q_24_8_v(float *y_,
                                               uint32_t len_y,
                                               int32_t *idx0,
                                               mm_q8_24_t *rate,
-                                              mm_q8_24_t rinc)
+                                              mm_q8_24_t rinc,
+                                              int32_t *index_err)
 {
     uint32_t n, idx0_;
-    int32_t _idx0 = *idx0, M, oldidx, adv, err = 0;
+    int32_t _idx0 = *idx0, M, oldidx, adv, err = *index_err;
     mm_q8_24_t _rate = *rate, adj_rate;
     float y_1, y0, y1, y2,
               frac1, frac0, frac_1, frac_2;
@@ -136,6 +137,7 @@ void MM_interp_cubic_rinc_q_8_24_idx_q_24_8_v(float *y_,
     }
     *idx0 = _idx0;
     *rate = _rate;
+    *index_err = err;
 }
 
 

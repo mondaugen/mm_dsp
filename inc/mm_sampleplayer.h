@@ -40,6 +40,13 @@ struct __MMSamplePlayerSigProc {
                                    */
     mm_q8_24_t         last_rate; /* The rate is determined by interpolating from
                                     this value to the *p_rate value */
+    int32_t            _index_err; /* Because of finite precision, small rates
+                                      will not be able to advance the playback
+                                      index at each sample computation, so we
+                                      keep track of the error and add the
+                                      incrementation error each tick.  After
+                                      enough ticks, the index should advance
+                                      (unless the rate is 0 of course). */
     MMInterpMethod  interp;
 };
 

@@ -101,6 +101,9 @@ void MMTrapEnvedSamplePlayer_noteOn_pRate(
         tmp;
     MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp).samples = 
         init->samples;
+    /* TODO: This should really be done with a reset function called on
+    MMEnvedSamplePlayer or something */
+    MMEnvedSamplePlayer_getSamplePlayerSigProc(tesp)._index_err = 0;
     MMEnvedSamplePlayer *esp = (MMEnvedSamplePlayer*)tesp;
     esp->bcm.lastConst = *init->p_gain;
     esp->bcm.newConst = init->p_gain;

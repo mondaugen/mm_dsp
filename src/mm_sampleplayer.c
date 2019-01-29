@@ -37,7 +37,8 @@ static void MMSamplePlayerSigProc_tick_no_sum_interp_cubic(MMSigProc *sp)
                                                      spsp->samples,
                                                      &spsp->index,
                                                      &spsp->last_rate,
-                                                     rinc);
+                                                     rinc,
+                                                     &spsp->_index_err);
         } else {
             MMWavTab_get_interpCubic_q_24_8_v(spsp->outBus->data,
                                               spsp->outBus->size,
@@ -121,4 +122,5 @@ void MMSamplePlayerSigProc_init(MMSamplePlayerSigProc *sp,
     sp->rate = 0;
     sp->p_rate = NULL;
     sp->note = 0;
+    sp->_index_err = 0;
 }

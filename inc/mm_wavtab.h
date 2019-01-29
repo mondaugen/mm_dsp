@@ -187,14 +187,16 @@ struct __MMWavTab {
                               wavtab,\
                               pidx0,\
                               prate,\
-                              rinc)\
+                              rinc,\
+                              index_err)\
     MM_interp_cubic_rinc_q_8_24_idx_q_24_8_v(pdest,\
                               len,\
                               MMArray_get_data(wavtab),\
                               MMArray_get_length(wavtab),\
                               pidx0,\
                               prate,\
-                              rinc)
+                              rinc,\
+                              index_err)
 
 #define MMWavTab_get_interpLinear_q_24_8_v(pdest,\
                               len,\

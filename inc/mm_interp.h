@@ -76,6 +76,7 @@ void MM_interp_cubic_rinc_q_8_24_idx_q_24_8_v(float *y_,
                                               uint32_t len_y,
                                               int32_t *idx0,
                                               mm_q8_24_t *rate,
-                                              mm_q8_24_t rinc);
+                                              mm_q8_24_t rinc,
+                                              int32_t *index_err);
 
 #endif /* MM_INTERP_H */
