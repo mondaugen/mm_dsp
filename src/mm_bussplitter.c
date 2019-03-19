@@ -6,8 +6,9 @@ static void MMBusSplitter_tick(MMSigProc *sp)
     MMSigProc_defaultTick(sp);
     MMBusSplitter *bm = (MMBusSplitter*)sp;
     size_t i, j, channels;
+    if (!bm->destBus) { return; }
     channels = bm->sourceBus->channels <= bm->destBus->channels ?
-        bm->sourceBus->channels : bm->destBus->channels;
+               bm->sourceBus->channels : bm->destBus->channels;
     for (i = 0; i < bm->sourceBus->size; i++) {
         for (j = 0; j < channels; j++) {
             bm->destBus->data[i*bm->destBus->channels + j] =
@@ -16,7 +17,14 @@ static void MMBusSplitter_tick(MMSigProc *sp)
     }
 }
 
-void MMBusSplitter_init(MMBusSplitter *bm, MMBus *sourceBus, MMBus *destBus)
+/*
+sourceBus can't be NULL but destBus can
+If it is, tick writes nothing to destBus
+*/
+void MMBusSplitter_init(
+    MMBusSplitter *bm,
+    MMBus *sourceBus,
+    MMBus *destBus)
 {
     MMSigProc_init((MMSigProc*)bm);
     bm->sourceBus = sourceBus;
@@ -24,3 +32,7 @@ void MMBusSplitter_init(MMBusSplitter *bm, MMBus *sourceBus, MMBus *destBus)
     MMSigProc_setTick(bm,MMBusSplitter_tick);
 }
 
+void MMBusSplitter_set_destBus(MMBusSplitter *bm, MMBus *destBus)
+{
+    bm->destBus = destBus;
+}

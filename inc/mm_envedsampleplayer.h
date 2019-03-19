@@ -47,6 +47,9 @@ typedef struct __MMEnvedSamplePlayerInitStruct {
 void MMEnvedSamplePlayer_init(MMEnvedSamplePlayer *esp,
                               MMEnvedSamplePlayerInitStruct *init);
 
+MMSigProc *
+MMEnvedSamplePlayer_get_last_node(MMEnvedSamplePlayer *esp);
+
 #define MMEnvedSamplePlayer_getSamplePlayerSigProc(esp)\
     ((MMEnvedSamplePlayer*)(esp))->spsp
 #define MMEnvedSamplePlayer_getEnvelope(esp) ((MMEnvedSamplePlayer*)(esp))->envelope

@@ -104,3 +104,10 @@ void MMEnvedSamplePlayer_init(MMEnvedSamplePlayer *esp,
             &MMEnvedSamplePlayer_getSamplePlayerSigProc(esp),
             MMSigProc_DoneAction_NONE);
 }
+
+MMSigProc *
+MMEnvedSamplePlayer_get_last_node(MMEnvedSamplePlayer *esp)
+{
+    return (MMSigProc *)MMDLList_getTail((MMDLList*)&esp->sigChain.sigProcs);
+}
+

@@ -6,6 +6,7 @@ static void MMBusMerger_tick(MMSigProc *sp)
     MMSigProc_defaultTick(sp);
     MMBusMerger *bm = (MMBusMerger*)sp;
     size_t i, j, channels;
+    if (!bm->destBus) { return; }
     channels = bm->sourceBus->channels <= bm->destBus->channels ?
         bm->sourceBus->channels : bm->destBus->channels;
     for (i = 0; i < bm->sourceBus->size; i++) {
@@ -16,15 +17,15 @@ static void MMBusMerger_tick(MMSigProc *sp)
     }
 }
 
-/* Sums the contents of sourceBus into the destBus.
- * If the sourceBus has a smaller number of channels than the destBus the n
- * channels of the sourceBus are written to the first n channels of the destBus.
- * If the sourceBus has a greater number of channels than the destBus then the
- * first m channels of the sourceBus are written to the m channels of the destBus.
- *
- * Both the sourceBus and the destBus must have the same size. 
- *
- */
+/*
+Sums the contents of sourceBus into the destBus.
+If the sourceBus has a smaller number of channels than the destBus the n
+channels of the sourceBus are written to the first n channels of the destBus.
+If the sourceBus has a greater number of channels than the destBus then the
+first m channels of the sourceBus are written to the m channels of the destBus.
+Both the sourceBus and the destBus must have the same size. 
+destBus can be NULL, in which case nothing is summed into it.
+*/
 void MMBusMerger_init(MMBusMerger *bm, MMBus *sourceBus, MMBus *destBus)
 {
     MMSigProc_init((MMSigProc*)bm);
@@ -33,3 +34,7 @@ void MMBusMerger_init(MMBusMerger *bm, MMBus *sourceBus, MMBus *destBus)
     MMSigProc_setTick(bm,MMBusMerger_tick);
 }
     
+void MMBusMerger_set_destBus(MMBusMerger *bm, MMBus *destBus)
+{
+    bm->destBus = destBus;
+}

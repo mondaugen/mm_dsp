@@ -17,4 +17,6 @@ struct __MMBusMerger {
 
 void MMBusMerger_init(MMBusMerger *bm, MMBus *sourceBus, MMBus *destBus);
 
+void MMBusMerger_set_destBus(MMBusMerger *bm, MMBus *destBus);
+
 #endif /* MM_BUSMERGER_H */

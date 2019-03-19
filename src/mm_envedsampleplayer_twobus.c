@@ -1,34 +1,19 @@
 #include "mm_bus.h" 
-#include "mm_busmerger.h" 
-#include "mm_bussplitter.h"
 #include "mm_sigproc.h" 
+#include "mm_envedsampleplayer_twobus.h"
 
-typedef struct {
-    MMEnvedSamplePlayerInitStruct super;
-    MMBus *outBus2;
-} MMEnvedSamplePlayerTwoBusInitStruct;
-
-typedef struct {
-    MMEnvedSamplePlayer super;
-    /* Bus where output is written and stored briefly before merged with outBus2 */
-    MMBus *tmpBus;
-    /* Splits the main output off into tmpBus */
-    MMBusSplitter bus_splitter;
-    /* Merges tmpBus with outBus2 */
-    MMBusMerger bus_merger;
-} MMEnvedSamplePlayerTwoBus;
-
+/* The MMEnvedSamplePlayer must be intialized before calling this */
 void MMEnvedSamplePlayerTwoBus_init(MMEnvedSamplePlayerTwoBus *esp,
                               MMEnvedSamplePlayerTwoBusInitStruct *init)
 {
-    MMEnvedSamplePlayer_init((MMEnvedSamplePlayer *)esp,
-                              (MMEnvedSamplePlayerInitStruct *)init);
-    /* Simply just add the tmpBus, bus_splitter and bus_merger */
-    esp->tmpBus = MMBus_new(esp->outBus2->size,esp->outBus2->channels);
-    MMBusSplitter_init(&esp->bus_splitter,esp->super.spsp.outBus,esp->tmpBus);
-    /* TODO: You need to get the end of the internal signal chain in order to
-    sum this in to the correct spot */
-    // MMSigProc_insertAfter(esp->super, &esp->busMult);
+    /* bus merger has no other bus, must be set */
+    MMBusMerger_init(&esp->bus_merger,init->esp->spsp.outBus,NULL);
+    MMSigProc *super_last_node = MMEnvedSamplePlayer_get_last_node(init->esp);
+    MMSigProc_insertAfter(super_last_node,&esp->bus_merger);
+}
 
-    MMBusMerger_init(&esp->bus_merger,esp->tmpBus,init->outBus2)
+void
+MMEnvedSamplePlayerTwoBus_set_out_bus(MMEnvedSamplePlayerTwoBus *esp, MMBus *outBus)
+{
+    MMBusMerger_set_destBus(&esp->bus_merger,outBus);
 }

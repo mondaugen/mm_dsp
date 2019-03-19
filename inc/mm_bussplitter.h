@@ -16,5 +16,6 @@ struct __MMBusSplitter {
 };
 
 void MMBusSplitter_init(MMBusSplitter *bm, MMBus *sourceBus, MMBus *destBus);
+void MMBusSplitter_set_destBus(MMBusSplitter *bm, MMBus *destBus);
 
 #endif /* MM_BUSSPLITTER_H */
